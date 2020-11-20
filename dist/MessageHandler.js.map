@@ -1,0 +1,1 @@
+{"version":3,"file":"MessageHandler.js","sourceRoot":"","sources":["../src/MessageHandler.ts"],"names":[],"mappings":";;AAAA,mCAA8B;AAE9B,MAAM,cAAc,GAAG;IACnB,OAAO,EAAE,EAAE;IACX,IAAI,EAAE,CAAC,OAAY,EAAE,EAAE;QACnB,IAAI,cAAc,CAAC,OAAO,EAAE;YACxB,YAAI,CAAC,cAAc,CAAC,OAAO,EAAE,OAAO,CAAC,CAAC;SACzC;IACL,CAAC;CACJ,CAAA;AAED,kBAAe,cAAc,CAAC"}
