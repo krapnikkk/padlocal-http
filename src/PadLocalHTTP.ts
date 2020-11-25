@@ -1,5 +1,5 @@
 import express, { Express, NextFunction, Request, Response } from 'express';
-import { Media, PadLocalClientConfig, ServerConfig } from './interface';
+import { Media, PadLocalClientConfig, ServerConfig, SNSMomentType } from './interface';
 import cors from "cors";
 import { StatusCodes } from 'http-status-codes';
 import HttpException from './exceptions/HttpException';
@@ -13,10 +13,7 @@ app.use(express.json());
 app.use(cors({
     methods: ['GET', 'POST', 'OPTIONS']
 }));
-app.use((_req: Request, _res: Response, next: NextFunction) => {
-    const error: HttpException = new HttpException(StatusCodes.NOT_FOUND, "Router Not Found");
-    next(error);
-});
+
 
 app.use(checkLoginMiddleware);
 app.use(errorMiddleware);
@@ -40,6 +37,24 @@ app.post("/api/logout", async (_req: Request, res: Response) => {
 app.post("/api/send_private_msg", async (req: Request, res: Response) => {
     let { id, message } = req.body;
     let result = await PadLocal.sendMessage({ message, id });
+    res.json({
+        result: result,
+        success: true
+    });
+});
+
+app.post("/api/send_chatroom_msg", async (req: Request, res: Response) => {
+    let { id, message, atUserList } = req.body;
+    let result = await PadLocal.sendMessage({ message, id }, atUserList);
+    res.json({
+        result: result,
+        success: true
+    });
+});
+
+app.post("/api/revoke_message", async (req: Request, res: Response) => {
+    let { id, msgId, revokeInfo } = req.body;
+    let result = await PadLocal.revokeMessage(msgId, id, revokeInfo);
     res.json({
         result: result,
         success: true
@@ -83,8 +98,8 @@ app.post("/api/send_voice", async (req: Request, res: Response) => {
 });
 
 app.post("/api/send_share_link", async (req: Request, res: Response) => {
-    let { id, title, desc, url, thumburl } = req.body;
-    let result = await PadLocal.sendAppMessageLink(id, { title, desc, url, thumburl });
+    let { id, shareInfo } = req.body;
+    let result = await PadLocal.sendAppMessageLink(id, shareInfo);
     res.json({
         result: result,
         success: true
@@ -92,8 +107,8 @@ app.post("/api/send_share_link", async (req: Request, res: Response) => {
 });
 
 app.post("/api/send_share_miniprogram", async (req: Request, res: Response) => {
-    let { id, title, desc, url, mpThumbFilePath, mpappusername, mpappname, mpappid, appiconurl, mpapppath } = req.body;
-    let result = await PadLocal.sendAppMessageMiniProgram(id, { title, desc, url, mpThumbFilePath, mpappusername, mpappname, mpappid, appiconurl, mpapppath });
+    let { id, info } = req.body;
+    let result = await PadLocal.sendAppMessageMiniProgram(id, info);
     res.json({
         result: result,
         success: true
@@ -103,6 +118,15 @@ app.post("/api/send_share_miniprogram", async (req: Request, res: Response) => {
 app.post("/api/send_contact_card", async (req: Request, res: Response) => {
     let { id, payload } = req.body;
     let result = await PadLocal.sendContactCardMessage(id, payload);
+    res.json({
+        result: result,
+        success: true
+    });
+});
+
+app.post("/api/search_contact", async (req: Request, res: Response) => {
+    let { userName } = req.body;
+    let result = await PadLocal.searchContact(userName);
     res.json({
         result: result,
         success: true
@@ -136,18 +160,17 @@ app.post("/api/get_contact", async (req: Request, res: Response) => {
     });
 });
 
-app.post("/api/get_contact_qrcode", async (req: Request, res: Response) => {
-    let { userName } = req.body;
-    let result = await PadLocal.getContactQRCode(userName);
+app.post("/api/get_contact_qrcode", async (_req: Request, res: Response) => {
+    let result = await PadLocal.getContactQRCode();
     res.json({
         result: result,
         success: true
     });
 });
 
-app.post("/api/search_contact", async (req: Request, res: Response) => {
-    let { userName } = req.body;// 微信号/手机号/QQ
-    let result = await PadLocal.searchContact(userName);
+app.post("/api/accept_contact", async (req: Request, res: Response) => {
+    let { stranger, ticket } = req.body;
+    let result = await PadLocal.acceptUser(stranger, ticket);
     res.json({
         result: result,
         success: true
@@ -172,9 +195,6 @@ app.post("/api/update_signature", async (req: Request, res: Response) => {
     });
 });
 
-/**
- * 查询好友关系 0：陌生人 1：通讯录好友 2：单向被删除好友【僵尸好友】
- */
 app.post("/api/zombie_test", async (req: Request, res: Response) => {
     let { userName } = req.body;
     let result = await PadLocal.zombieTest(userName);
@@ -195,7 +215,6 @@ app.post("/api/update_contact_remark", async (req: Request, res: Response) => {
 
 app.post("/api/create_chatroom", async (req: Request, res: Response) => {
     let { userNameList } = req.body;
-    console.log(Object.prototype.toString.call(userNameList));
     let result = await PadLocal.createChatRoom(userNameList);
     res.json({
         result: result,
@@ -257,6 +276,33 @@ app.post("/api/quit_chatroom", async (req: Request, res: Response) => {
     });
 });
 
+app.post("/api/add_chatroom_member", async (req: Request, res: Response) => {
+    let { roomId, userName } = req.body;
+    let result = await PadLocal.addChatRoomMember(roomId, userName);
+    res.json({
+        result: result,
+        success: true
+    });
+});
+
+app.post("/api/delete_chatroom_member", async (req: Request, res: Response) => {
+    let { roomId, userName } = req.body;
+    let result = await PadLocal.deleteChatRoomMember(roomId, userName);
+    res.json({
+        result: result,
+        success: true
+    });
+});
+
+app.post("/api/invite_chatroom_member", async (req: Request, res: Response) => {
+    let { roomId, userName } = req.body;
+    let result = await PadLocal.inviteChatRoomMember(roomId, userName);
+    res.json({
+        result: result,
+        success: true
+    });
+});
+
 app.post("/api/get_labelList", async (_req: Request, res: Response) => {
     let result = await PadLocal.getLabelList();
     res.json({
@@ -292,33 +338,6 @@ app.post("/api/set_contact_label", async (req: Request, res: Response) => {
     });
 });
 
-app.post("/api/add_chatroom_member", async (req: Request, res: Response) => {
-    let { roomId, userName } = req.body;
-    let result = await PadLocal.addChatRoomMember(roomId, userName);
-    res.json({
-        result: result,
-        success: true
-    });
-});
-
-app.post("/api/delete_chatroom_member", async (req: Request, res: Response) => {
-    let { roomId, userName } = req.body;
-    let result = await PadLocal.deleteChatRoomMember(roomId, userName);
-    res.json({
-        result: result,
-        success: true
-    });
-});
-
-app.post("/api/invite_chatroom_member", async (req: Request, res: Response) => {
-    let { roomId, userName } = req.body;
-    let result = await PadLocal.inviteChatRoomMember(roomId, userName);
-    res.json({
-        result: result,
-        success: true
-    });
-});
-
 app.post("/api/sns_get_timeline", async (req: Request, res: Response) => {
     let { maxId } = req.body;
     let result = await PadLocal.snsGetTimeline(maxId);
@@ -337,9 +356,27 @@ app.post("/api/sns_get_moment", async (req: Request, res: Response) => {
     });
 });
 
-app.post("/api/sns_send_moment", async (req: Request, res: Response) => {
-    let { content, type, options } = req.body;
-    let result = await PadLocal.snsSendMoment(type, content, options);
+app.post("/api/sns_send_text_moment", async (req: Request, res: Response) => {
+    let { content, options } = req.body;
+    let result = await PadLocal.snsSendMoment(SNSMomentType.Text, content, options);
+    res.json({
+        result: result,
+        success: true
+    });
+});
+
+app.post("/api/sns_send_image_moment", async (req: Request, res: Response) => {
+    let { content, options } = req.body;
+    let result = await PadLocal.snsSendMoment(SNSMomentType.Image, content, options);
+    res.json({
+        result: result,
+        success: true
+    });
+});
+
+app.post("/api/sns_send_url_moment", async (req: Request, res: Response) => {
+    let { content, options } = req.body;
+    let result = await PadLocal.snsSendMoment(SNSMomentType.Url, content, options);
     res.json({
         result: result,
         success: true
@@ -393,7 +430,7 @@ app.post("/api/sns_remove_moment_comment", async (req: Request, res: Response) =
 
 app.post("/api/sns_make_moment_private", async (req: Request, res: Response) => {
     let { momentId } = req.body;
-    let result = await PadLocal.snsUnlikeMoment(momentId);
+    let result = await PadLocal.snsMakeMomentPrivate(momentId);
     res.json({
         result: result,
         success: true
@@ -402,20 +439,29 @@ app.post("/api/sns_make_moment_private", async (req: Request, res: Response) => 
 
 app.post("/api/sns_make_moment_public", async (req: Request, res: Response) => {
     let { momentId } = req.body;
-    let result = await PadLocal.snsUnlikeMoment(momentId);
+    let result = await PadLocal.snsMakeMomentPublic(momentId);
     res.json({
         result: result,
         success: true
     });
 });
 
-export const install = (robotConfig:PadLocalClientConfig,serverConfig:ServerConfig) => {
-    let {postUrl,port} = serverConfig;
+app.use((_req: Request, _res: Response, next: NextFunction) => {
+    const error: HttpException = new HttpException(StatusCodes.NOT_FOUND, "Router Not Found");
+    next(error);
+});
+
+export const install = (robotConfig: PadLocalClientConfig, serverConfig: ServerConfig) => {
+    let { postUrl, port } = serverConfig;
     PadLocal.install(robotConfig);
     MessageHandler.postUrl = postUrl;
     app.listen(port, async () => {
         console.log('running on http://127.0.0.1:' + serverConfig.port);
     });
+}
+
+export const login = () => {
+    PadLocal.login();
 }
 
 
