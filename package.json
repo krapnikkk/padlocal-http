@@ -1,15 +1,36 @@
 {
   "name": "padlocal-http",
-  "version": "0.1.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "build": "tsc",
-    "dev": "nodemon --exec ts-node src/index.ts"
-  },
-  "keywords": [],
-  "author": "",
+  "version": "0.1.2",
+  "description": "make http api for Padlocal ts client",
+  "keywords": [
+    "padlocal",
+    "chatbot",
+    "weixin",
+    "wechat",
+    "wechaty",
+    "wechaty-puppet",
+    "http"
+  ],
+  "author": "krapnikkk",
   "license": "ISC",
+  "main": "dist/PadLocalHTTP.js",
+  "types": "dist/PadLocalHTTP.d.ts",
+  "files": [
+    "dist/**/*"
+  ],
+  "scripts": {
+    "clean": "rm -fr dist/*",
+    "build": "npm run clean && tsc",
+    "dev": "nodemon --exec ts-node dev/index.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/krapnikkk/padlocal-http.git"
+  },
+  "bugs": {
+    "url": "https://github.com/krapnikkk/padlocal-http/issues"
+  },
+  "homepage": "https://github.com/krapnikkk/padlocal-http#readme",
   "dependencies": {
     "cors": "^2.8.5",
     "express": "^4.17.1",
