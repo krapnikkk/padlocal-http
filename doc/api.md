@@ -102,54 +102,57 @@
   - [`invite_chatroom_member` 邀请好友进入群聊](#invite_chatroom_member-邀请好友进入群聊)
     - [参数](#参数-30)
     - [响应数据](#响应数据-31)
-  - [`get_labelList` 获取好友标签列表](#get_labellist-获取好友标签列表)
+  - [`delete_chatroom_member` 将用户移出群聊](#delete_chatroom_member-将用户移出群聊)
     - [参数](#参数-31)
     - [响应数据](#响应数据-32)
-  - [`add_label` 添加好友标签](#add_label-添加好友标签)
+  - [`get_labelList` 获取好友标签列表](#get_labellist-获取好友标签列表)
     - [参数](#参数-32)
     - [响应数据](#响应数据-33)
-  - [`remove_label` 移除好友标签](#remove_label-移除好友标签)
+  - [`add_label` 添加好友标签](#add_label-添加好友标签)
     - [参数](#参数-33)
     - [响应数据](#响应数据-34)
-  - [`set_contact_label` 设置通讯录标签](#set_contact_label-设置通讯录标签)
+  - [`remove_label` 移除好友标签](#remove_label-移除好友标签)
     - [参数](#参数-34)
     - [响应数据](#响应数据-35)
-  - [`sns_get_timeline` 获取朋友圈动态列表](#sns_get_timeline-获取朋友圈动态列表)
+  - [`set_contact_label` 设置通讯录标签](#set_contact_label-设置通讯录标签)
     - [参数](#参数-35)
     - [响应数据](#响应数据-36)
-  - [`sns_get_moment` 朋友圈动态详情](#sns_get_moment-朋友圈动态详情)
+  - [`sns_get_timeline` 获取朋友圈动态列表](#sns_get_timeline-获取朋友圈动态列表)
     - [参数](#参数-36)
     - [响应数据](#响应数据-37)
-  - [`sns_send_text_moment` 发送朋友圈文字动态](#sns_send_text_moment-发送朋友圈文字动态)
+  - [`sns_get_moment` 朋友圈动态详情](#sns_get_moment-朋友圈动态详情)
     - [参数](#参数-37)
     - [响应数据](#响应数据-38)
-  - [`sns_send_image_moment` 发送朋友圈文字动态](#sns_send_image_moment-发送朋友圈文字动态)
+  - [`sns_send_text_moment` 发送朋友圈文字动态](#sns_send_text_moment-发送朋友圈文字动态)
     - [参数](#参数-38)
     - [响应数据](#响应数据-39)
-  - [`sns_send_url_moment` 发送朋友圈链接动态](#sns_send_url_moment-发送朋友圈链接动态)
+  - [`sns_send_image_moment` 发送朋友圈文字动态](#sns_send_image_moment-发送朋友圈文字动态)
     - [参数](#参数-39)
     - [响应数据](#响应数据-40)
-  - [`sns_remove_moment` 移除朋友圈动态](#sns_remove_moment-移除朋友圈动态)
+  - [`sns_send_url_moment` 发送朋友圈链接动态](#sns_send_url_moment-发送朋友圈链接动态)
     - [参数](#参数-40)
     - [响应数据](#响应数据-41)
-  - [`sns_send_comment` 评论朋友圈动态](#sns_send_comment-评论朋友圈动态)
+  - [`sns_remove_moment` 移除朋友圈动态](#sns_remove_moment-移除朋友圈动态)
     - [参数](#参数-41)
     - [响应数据](#响应数据-42)
-  - [`sns_like_moment` 朋友圈动态点赞](#sns_like_moment-朋友圈动态点赞)
+  - [`sns_send_comment` 评论朋友圈动态](#sns_send_comment-评论朋友圈动态)
     - [参数](#参数-42)
     - [响应数据](#响应数据-43)
-  - [`sns_unlike_moment` 朋友圈动态取消点赞](#sns_unlike_moment-朋友圈动态取消点赞)
+  - [`sns_like_moment` 朋友圈动态点赞](#sns_like_moment-朋友圈动态点赞)
     - [参数](#参数-43)
     - [响应数据](#响应数据-44)
-  - [`sns_remove_moment_comment` 朋友圈动态删除评论](#sns_remove_moment_comment-朋友圈动态删除评论)
+  - [`sns_unlike_moment` 朋友圈动态取消点赞](#sns_unlike_moment-朋友圈动态取消点赞)
     - [参数](#参数-44)
     - [响应数据](#响应数据-45)
-  - [`sns_make_moment_private` 朋友圈动态设为私密](#sns_make_moment_private-朋友圈动态设为私密)
+  - [`sns_remove_moment_comment` 朋友圈动态删除评论](#sns_remove_moment_comment-朋友圈动态删除评论)
     - [参数](#参数-45)
     - [响应数据](#响应数据-46)
-  - [`sns_make_moment_public` 朋友圈动态设为公开](#sns_make_moment_public-朋友圈动态设为公开)
+  - [`sns_make_moment_private` 朋友圈动态设为私密](#sns_make_moment_private-朋友圈动态设为私密)
     - [参数](#参数-46)
     - [响应数据](#响应数据-47)
+  - [`sns_make_moment_public` 朋友圈动态设为公开](#sns_make_moment_public-朋友圈动态设为公开)
+    - [参数](#参数-47)
+    - [响应数据](#响应数据-48)
   - [数据结构定义](#数据结构定义)
     - [`messageInfo` 消息Response信息数据结构](#messageinfo-消息response信息数据结构)
     - [`messageRevokeInfo` 消息撤回信息数据结构](#messagerevokeinfo-消息撤回信息数据结构)
@@ -620,6 +623,19 @@
 无
 
 ## `invite_chatroom_member` 邀请好友进入群聊
+
+### 参数
+
+| 字段名 | 数据类型 | 默认值 | 说明 |
+| ----- | ------- | ----- | --- |
+| `roomId` | string | - | 微信群 ID |
+| `userName` | string | - | 微信 ID |
+
+### 响应数据
+
+无
+
+## `delete_chatroom_member` 将用户移出群聊
 
 ### 参数
 
