@@ -1,10 +1,15 @@
-import { post } from "./utils"
-
+import axios from "axios";
 const MessageHandler = {
     postUrl: "",
-    post: (message: any) => {
+    post: (message: object) => {
         if (MessageHandler.postUrl) {
-            post(MessageHandler.postUrl, message);
+            axios.post(MessageHandler.postUrl, message)
+              .then( ()=>{
+                
+              })
+              .catch( (e:Error)=> {
+                console.log(e.message);
+              });
         }
     }
 }

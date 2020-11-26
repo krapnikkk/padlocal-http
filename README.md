@@ -1,5 +1,6 @@
 # PADLOCAL-HTTP
 [![NPM Version](https://badge.fury.io/js/padlocal-http.svg)](https://www.npmjs.com/package/padlocal-http)
+[![NPM Version](https://badge.fury.io/js/padlocal-client-ts.svg)](https://www.npmjs.com/package/padlocal-client-ts)
 [![TypeScript](https://img.shields.io/badge/%3C%2F%3E-TypeScript-blue.svg)](https://www.typescriptlang.org/)
 ![Stage](https://img.shields.io/badge/Stage-beta-yellow)
 
@@ -36,13 +37,16 @@ PadLocalHTTP.install(padLocalOptions, serverOptions);
 
 ## 接口文档
 [接口文档](./doc/index.md)
+[HTTP-API](./doc/api.md)
+[消息事件](./doc/message.md)
 
 ## 申请Padlocal token
 
  Padlocal is in **beta testing** stage, granting tokens to limited partners. If you want to apply, please [contact admin](mailto:oxddoxdd@gmail.com) for further information.
 
-## TODO[FLAG]
+## TODO
 
+- [ ] 请求参数校验
 - [ ] 增加websocket协议
 - [ ] 多账号管理
   

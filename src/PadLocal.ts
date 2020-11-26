@@ -60,16 +60,16 @@ const PadLocal = {
             client.on("message", (messageList: Message[]) => {
                 for (const message of messageList) {
                     console.log("on message: ", JSON.stringify(message.toObject()));
-                    MessageHandler.post(message.toObject())
+                    MessageHandler.post({message})
                 }
             });
 
-            client.on("contact", (contactList: Contact[]) => {
-                for (const contact of contactList) {
-                    console.log("on contact: ", JSON.stringify(contact.toObject()));
-                    MessageHandler.post(contact.toObject())
-                }
-            });
+            // client.on("contact", (contactList: Contact[]) => {
+            //     for (const contact of contactList) {
+            //         console.log("on contact: ", JSON.stringify(contact.toObject()));
+            //         MessageHandler.post(contact.toObject())
+            //     }
+            // });
 
             client.on("error", (e) => {
                 console.log("error:", e);
@@ -81,7 +81,7 @@ const PadLocal = {
             if (client) {
                 const response = await client.api.logout();
                 PadLocal.isLogin = false;
-                resolve(response.toObject)
+                resolve({response})
             }
         })
     },
@@ -96,7 +96,7 @@ const PadLocal = {
                     message,
                     atUserList
                 );
-                resolve(response.toObject())
+                resolve({response})
             } catch (e) {
                 resolve(e);
             }

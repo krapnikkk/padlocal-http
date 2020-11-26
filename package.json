@@ -32,6 +32,7 @@
   },
   "homepage": "https://github.com/krapnikkk/padlocal-http#readme",
   "dependencies": {
+    "axios": "^0.21.0",
     "cors": "^2.8.5",
     "express": "^4.17.1",
     "http-status-codes": "^2.1.4",

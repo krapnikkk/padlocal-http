@@ -14,6 +14,9 @@ app.use(cors({
     methods: ['GET', 'POST', 'OPTIONS']
 }));
 
+process.on('unhandledRejection', (error:Error) => {
+    console.log('unhandledRejection', error.message);
+  });
 
 app.use(checkLoginMiddleware);
 app.use(errorMiddleware);

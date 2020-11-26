@@ -1,124 +1,158 @@
-# 公开 API
+# HTTP API
 
 <details>
 <summary>目录</summary>
 <p>
 
-- [公开 API](#公开-api)
+- [HTTP API](#http-api)
   - [`send_private_msg` 发送私聊消息](#send_private_msg-发送私聊消息)
     - [参数](#参数)
     - [响应数据](#响应数据)
-  - [`send_group_msg` 发送群消息](#send_group_msg-发送群消息)
+  - [`send_chatroom_msg` 发送群消息](#send_chatroom_msg-发送群消息)
     - [参数](#参数-1)
     - [响应数据](#响应数据-1)
-  - [`send_msg` 发送消息](#send_msg-发送消息)
+  - [`revoke_message` 撤回消息](#revoke_message-撤回消息)
     - [参数](#参数-2)
     - [响应数据](#响应数据-2)
-  - [`delete_msg` 撤回消息](#delete_msg-撤回消息)
-    - [参数](#参数-3)
     - [响应数据](#响应数据-3)
-  - [`get_msg` 获取消息](#get_msg-获取消息)
-    - [参数](#参数-4)
+  - [`send_image` 发送图片](#send_image-发送图片)
+    - [参数](#参数-3)
     - [响应数据](#响应数据-4)
-  - [`get_forward_msg` 获取合并转发消息](#get_forward_msg-获取合并转发消息)
-    - [参数](#参数-5)
+  - [`send_voice` 发送语音](#send_voice-发送语音)
+    - [参数](#参数-4)
     - [响应数据](#响应数据-5)
-  - [`send_like` 发送好友赞](#send_like-发送好友赞)
-    - [参数](#参数-6)
+  - [`send_video` 发送视频](#send_video-发送视频)
+    - [参数](#参数-5)
     - [响应数据](#响应数据-6)
-  - [`set_group_kick` 群组踢人](#set_group_kick-群组踢人)
-    - [参数](#参数-7)
+  - [`send_file` 发送文件](#send_file-发送文件)
+    - [参数](#参数-6)
     - [响应数据](#响应数据-7)
-  - [`set_group_ban` 群组单人禁言](#set_group_ban-群组单人禁言)
-    - [参数](#参数-8)
+  - [`send_share_link` 分享链接](#send_share_link-分享链接)
+    - [参数](#参数-7)
     - [响应数据](#响应数据-8)
-  - [`set_group_anonymous_ban` 群组匿名用户禁言](#set_group_anonymous_ban-群组匿名用户禁言)
-    - [参数](#参数-9)
+  - [`send_share_miniprogram` 分享小程序](#send_share_miniprogram-分享小程序)
+    - [参数](#参数-8)
     - [响应数据](#响应数据-9)
-  - [`set_group_whole_ban` 群组全员禁言](#set_group_whole_ban-群组全员禁言)
-    - [参数](#参数-10)
+  - [`send_contact_card` 分享名片](#send_contact_card-分享名片)
+    - [参数](#参数-9)
     - [响应数据](#响应数据-10)
-  - [`set_group_admin` 群组设置管理员](#set_group_admin-群组设置管理员)
-    - [参数](#参数-11)
+  - [`get_contact_qrcode` 获取我的二维码名片](#get_contact_qrcode-获取我的二维码名片)
+    - [参数](#参数-10)
     - [响应数据](#响应数据-11)
-  - [`set_group_anonymous` 群组匿名](#set_group_anonymous-群组匿名)
-    - [参数](#参数-12)
+  - [`search_contact` 获取微信用户信息](#search_contact-获取微信用户信息)
+    - [参数](#参数-11)
     - [响应数据](#响应数据-12)
-  - [`set_group_card` 设置群名片（群备注）](#set_group_card-设置群名片群备注)
-    - [参数](#参数-13)
+  - [`add_contact` 发起朋友请求](#add_contact-发起朋友请求)
+    - [参数](#参数-12)
     - [响应数据](#响应数据-13)
-  - [`set_group_name` 设置群名](#set_group_name-设置群名)
-    - [参数](#参数-14)
+  - [`delete_contact` 单向删除朋友](#delete_contact-单向删除朋友)
+    - [参数](#参数-13)
     - [响应数据](#响应数据-14)
-  - [`set_group_leave` 退出群组](#set_group_leave-退出群组)
-    - [参数](#参数-15)
+  - [`get_contact` 获取微信用户信息](#get_contact-获取微信用户信息)
+    - [参数](#参数-14)
     - [响应数据](#响应数据-15)
-  - [`set_group_special_title` 设置群组专属头衔](#set_group_special_title-设置群组专属头衔)
-    - [参数](#参数-16)
+  - [`accept_contact` 接收好友请求](#accept_contact-接收好友请求)
+    - [参数](#参数-15)
     - [响应数据](#响应数据-16)
-  - [`set_friend_add_request` 处理加好友请求](#set_friend_add_request-处理加好友请求)
-    - [参数](#参数-17)
+  - [`update_nickname` 更新微信昵称](#update_nickname-更新微信昵称)
+    - [参数](#参数-16)
     - [响应数据](#响应数据-17)
-  - [`set_group_add_request` 处理加群请求／邀请](#set_group_add_request-处理加群请求邀请)
-    - [参数](#参数-18)
+  - [`update_signature` 更新微信个性签名](#update_signature-更新微信个性签名)
+    - [参数](#参数-17)
     - [响应数据](#响应数据-18)
-  - [`get_login_info` 获取登录号信息](#get_login_info-获取登录号信息)
-    - [参数](#参数-19)
+  - [`zombie_test` 查询好友关系](#zombie_test-查询好友关系)
+    - [参数](#参数-18)
     - [响应数据](#响应数据-19)
-  - [`get_stranger_info` 获取陌生人信息](#get_stranger_info-获取陌生人信息)
-    - [参数](#参数-20)
+  - [`update_contact_remark` 更新好友备注](#update_contact_remark-更新好友备注)
+    - [参数](#参数-19)
     - [响应数据](#响应数据-20)
-  - [`get_friend_list` 获取好友列表](#get_friend_list-获取好友列表)
-    - [参数](#参数-21)
+  - [`create_chatroom` 创建群聊](#create_chatroom-创建群聊)
+    - [参数](#参数-20)
     - [响应数据](#响应数据-21)
-  - [`get_group_info` 获取群信息](#get_group_info-获取群信息)
-    - [参数](#参数-22)
+  - [`get_chatroom_members` 获取群聊成员列表](#get_chatroom_members-获取群聊成员列表)
+    - [参数](#参数-21)
     - [响应数据](#响应数据-22)
-  - [`get_group_list` 获取群列表](#get_group_list-获取群列表)
-    - [参数](#参数-23)
+  - [`get_chatroom_member` 获取群聊指定成员信息](#get_chatroom_member-获取群聊指定成员信息)
+    - [参数](#参数-22)
     - [响应数据](#响应数据-23)
-  - [`get_group_member_info` 获取群成员信息](#get_group_member_info-获取群成员信息)
-    - [参数](#参数-24)
+  - [`get_chatroom_qrcode` 获取群聊二维码](#get_chatroom_qrcode-获取群聊二维码)
+    - [参数](#参数-23)
     - [响应数据](#响应数据-24)
-  - [`get_group_member_list` 获取群成员列表](#get_group_member_list-获取群成员列表)
-    - [参数](#参数-25)
+  - [`set_chatroom_announcement` 发布群聊公告](#set_chatroom_announcement-发布群聊公告)
+    - [参数](#参数-24)
     - [响应数据](#响应数据-25)
-  - [`get_group_honor_info` 获取群荣誉信息](#get_group_honor_info-获取群荣誉信息)
-    - [参数](#参数-26)
+  - [`set_chatroom_name` 设置群聊名称](#set_chatroom_name-设置群聊名称)
+    - [参数](#参数-25)
     - [响应数据](#响应数据-26)
-  - [`get_cookies` 获取 Cookies](#get_cookies-获取-cookies)
-    - [参数](#参数-27)
+  - [`quit_chatroom` 离开群聊](#quit_chatroom-离开群聊)
+    - [参数](#参数-26)
     - [响应数据](#响应数据-27)
-  - [`get_csrf_token` 获取 CSRF Token](#get_csrf_token-获取-csrf-token)
-    - [参数](#参数-28)
+  - [`add_chatroom_member` 添加好友进入群聊](#add_chatroom_member-添加好友进入群聊)
+    - [参数](#参数-27)
     - [响应数据](#响应数据-28)
-  - [`get_credentials` 获取 QQ 相关接口凭证](#get_credentials-获取-qq-相关接口凭证)
-    - [参数](#参数-29)
+  - [`invite_chatroom_member` 邀请好友进入群聊](#invite_chatroom_member-邀请好友进入群聊)
+    - [参数](#参数-28)
     - [响应数据](#响应数据-29)
-  - [`get_record` 获取语音](#get_record-获取语音)
-    - [参数](#参数-30)
+  - [`get_labelList` 获取好友标签列表](#get_labellist-获取好友标签列表)
+    - [参数](#参数-29)
     - [响应数据](#响应数据-30)
-  - [`get_image` 获取图片](#get_image-获取图片)
-    - [参数](#参数-31)
+  - [`add_label` 添加好友标签](#add_label-添加好友标签)
+    - [参数](#参数-30)
     - [响应数据](#响应数据-31)
-  - [`can_send_image` 检查是否可以发送图片](#can_send_image-检查是否可以发送图片)
-    - [参数](#参数-32)
+  - [`remove_label` 移除好友标签](#remove_label-移除好友标签)
+    - [参数](#参数-31)
     - [响应数据](#响应数据-32)
-  - [`can_send_record` 检查是否可以发送语音](#can_send_record-检查是否可以发送语音)
-    - [参数](#参数-33)
+  - [`set_contact_label` 设置通讯录标签](#set_contact_label-设置通讯录标签)
+    - [参数](#参数-32)
     - [响应数据](#响应数据-33)
-  - [`get_status` 获取运行状态](#get_status-获取运行状态)
-    - [参数](#参数-34)
+  - [`sns_get_timeline` 获取朋友圈动态列表](#sns_get_timeline-获取朋友圈动态列表)
+    - [参数](#参数-33)
     - [响应数据](#响应数据-34)
-  - [`get_version_info` 获取版本信息](#get_version_info-获取版本信息)
-    - [参数](#参数-35)
+  - [`sns_get_moment` 朋友圈动态详情](#sns_get_moment-朋友圈动态详情)
+    - [参数](#参数-34)
     - [响应数据](#响应数据-35)
-  - [`set_restart` 重启 OneBot 实现](#set_restart-重启-onebot-实现)
-    - [参数](#参数-36)
+  - [`sns_send_text_moment` 发送朋友圈文字动态](#sns_send_text_moment-发送朋友圈文字动态)
+    - [参数](#参数-35)
     - [响应数据](#响应数据-36)
-  - [`clean_cache` 清理缓存](#clean_cache-清理缓存)
-    - [参数](#参数-37)
+  - [`sns_send_image_moment` 发送朋友圈文字动态](#sns_send_image_moment-发送朋友圈文字动态)
+    - [参数](#参数-36)
     - [响应数据](#响应数据-37)
+  - [`sns_send_url_moment` 发送朋友圈链接动态](#sns_send_url_moment-发送朋友圈链接动态)
+    - [参数](#参数-37)
+    - [响应数据](#响应数据-38)
+  - [`sns_remove_moment` 移除朋友圈动态](#sns_remove_moment-移除朋友圈动态)
+    - [参数](#参数-38)
+    - [响应数据](#响应数据-39)
+  - [`sns_send_comment` 评论朋友圈动态](#sns_send_comment-评论朋友圈动态)
+    - [参数](#参数-39)
+    - [响应数据](#响应数据-40)
+  - [`sns_like_moment` 朋友圈动态点赞](#sns_like_moment-朋友圈动态点赞)
+    - [参数](#参数-40)
+    - [响应数据](#响应数据-41)
+  - [`sns_unlike_moment` 朋友圈动态取消点赞](#sns_unlike_moment-朋友圈动态取消点赞)
+    - [参数](#参数-41)
+    - [响应数据](#响应数据-42)
+  - [`sns_remove_moment_comment` 朋友圈动态删除评论](#sns_remove_moment_comment-朋友圈动态删除评论)
+    - [参数](#参数-42)
+    - [响应数据](#响应数据-43)
+  - [`sns_make_moment_private` 朋友圈动态设为私密](#sns_make_moment_private-朋友圈动态设为私密)
+    - [参数](#参数-43)
+    - [响应数据](#响应数据-44)
+  - [`sns_make_moment_public` 朋友圈动态设为公开](#sns_make_moment_public-朋友圈动态设为公开)
+    - [参数](#参数-44)
+    - [响应数据](#响应数据-45)
+  - [数据类型结构定义](#数据类型结构定义)
+    - [`messageInfo` 消息Response信息数据类型](#messageinfo-消息response信息数据类型)
+    - [`messageRevokeInfo` 消息撤回信息数据类型](#messagerevokeinfo-消息撤回信息数据类型)
+    - [`ShareInfo` 链接分享数据类型](#shareinfo-链接分享数据类型)
+    - [`contactInfo` 联系人信息数据类型](#contactinfo-联系人信息数据类型)
+    - [`chatroomInfo` 群聊信息数据类型](#chatroominfo-群聊信息数据类型)
+    - [`memberList` 群聊用户列表数据类型](#memberlist-群聊用户列表数据类型)
+    - [`MomentList` 朋友圈动态列表数据类型](#momentlist-朋友圈动态列表数据类型)
+    - [`snsMoment` 朋友圈动态详情数据类型](#snsmoment-朋友圈动态详情数据类型)
+    - [`replyComment` 朋友圈动态评论数据类型](#replycomment-朋友圈动态评论数据类型)
+    - [`SNSMonentOption` 朋友圈动态设置数据类型](#snsmonentoption-朋友圈动态设置数据类型)
+    - [`SNSImageMoment` 朋友圈图片动态数据类型](#snsimagemoment-朋友圈图片动态数据类型)
 
 </p>
 </details>
@@ -129,7 +163,7 @@
 
 | 字段名 | 数据类型 | 默认值 | 说明 |
 | ----- | ------- | ----- | --- |
-| `id` | number | - | 微信id或者微信群id | 
+| `id` | number | - | 微信 ID | 
 | `message` | string | - | 要发送的内容 |
 
 
@@ -137,271 +171,38 @@
 
 | 字段名 | 数据类型 | 说明 |
 | ----- | ------- | --- |
-| `message_id` | number (int32) | 消息 ID |
+| `response` | object[ [messageInfo](#messageInfo-消息Response信息) ]  | 消息信息 |
 
-## `send_group_msg` 发送群消息
+
+## `send_chatroom_msg` 发送群消息
 
 ### 参数
 
 | 字段名 | 数据类型 | 默认值 | 说明 |
 | ----- | ------- | ----- | --- |
-| `group_id` | number | - | 群号 |
-| `message` | message | - | 要发送的内容 |
+| `id` | number | - | 微信群 ID |
+| `message` | string | - | 要发送的内容 |
+| `atUserlist` | string[] | - | @的群成员列表数组 |
 
 ### 响应数据
 
 | 字段名 | 数据类型 | 说明 |
 | ----- | ------- | --- |
-| `message_id` | number (int32) | 消息 ID |
+| `response` | object[ [messageInfo](#messageInfo-消息Response信息) ]  | 消息信息 |
 
-## `send_msg` 发送消息
 
-### 参数
 
-| 字段名 | 数据类型 | 默认值 | 说明 |
-| ----- | ------- | ----- | --- |
-| `message_type` | string | - | 消息类型，支持 `private`、`group`，分别对应私聊、群组，如不传入，则根据传入的 `*_id` 参数判断 |
-| `user_id` | number | - | 对方 QQ 号（消息类型为 `private` 时需要） |
-| `group_id` | number | - | 群号（消息类型为 `group` 时需要） |
-| `message` | message | - | 要发送的内容 |
-| `auto_escape` | boolean | `false` | 消息内容是否作为纯文本发送（即不解析 CQ 码），只在 `message` 字段是字符串时有效 |
-
-### 响应数据
-
-| 字段名 | 数据类型 | 说明 |
-| ----- | ------- | --- |
-| `message_id` | number (int32) | 消息 ID |
-
-## `delete_msg` 撤回消息
+## `revoke_message` 撤回消息
 
 ### 参数
 
 | 字段名 | 数据类型 | 默认值 | 说明 |
 | ----- | ------- | ----- | --- |
-| `message_id` | number (int32) | - | 消息 ID |
+| `id` | string | - | 微信 ID 或微信群 ID |
+| `msgId` | string | - | 消息 ID |
+| `revokeInfo` | object[[messageRevokeInfo](#messagerevokeinfo-消息撤回信息)] | - | 用于撤销的相关信息 |
 
 ### 响应数据
-
-无
-
-## `get_msg` 获取消息
-
-### 参数
-
-| 字段名         | 数据类型  | 说明   |
-| ------------ | ----- | ------ |
-| `message_id` | number (int32) | 消息 ID |
-
-### 响应数据
-
-| 字段名         | 数据类型    | 说明       |
-| ------------ | ------- | ---------- |
-| `time`       | number (int32) | 发送时间   |
-| `message_type` | string | 消息类型，同 [消息事件](../event/message.md) |
-| `message_id` | number (int32) | 消息 ID     |
-| `real_id` | number (int32) | 消息真实 ID     |
-| `sender`     | object  | 发送人信息，同 [消息事件](../event/message.md) |
-| `message`    | message | 消息内容   |
-
-## `get_forward_msg` 获取合并转发消息
-
-### 参数
-
-| 字段名         | 数据类型   | 说明   |
-| ------------ | ------ | ------ |
-| `id` | string | 合并转发 ID |
-
-### 响应数据
-
-| 字段名 | 类型 | 说明 |
-| --- | --- | --- |
-| `message` | message | 消息内容，使用 [消息的数组格式](../message/array.md) 表示，数组中的消息段全部为 [`node` 消息段](../message/segment.md#合并转发自定义节点) |
-
-## `send_like` 发送好友赞
-
-### 参数
-
-| 字段名 | 数据类型 | 默认值 | 说明 |
-| ----- | ------- | ----- | --- |
-| `user_id` | number | - | 对方 QQ 号 |
-| `times` | number | 1 | 赞的次数，每个好友每天最多 10 次 |
-
-### 响应数据
-
-无
-
-## `set_group_kick` 群组踢人
-
-### 参数
-
-| 字段名 | 数据类型 | 默认值 | 说明 |
-| ----- | ------- | ----- | --- |
-| `group_id` | number | - | 群号 |
-| `user_id` | number | - | 要踢的 QQ 号  |
-| `reject_add_request` | boolean | `false` | 拒绝此人的加群请求 |
-
-### 响应数据
-
-无
-
-## `set_group_ban` 群组单人禁言
-
-### 参数
-
-| 字段名 | 数据类型 | 默认值 | 说明 |
-| ----- | ------- | ----- | --- |
-| `group_id` | number | - | 群号 |
-| `user_id` | number | - | 要禁言的 QQ 号 |
-| `duration` | number | `30 * 60` | 禁言时长，单位秒，0 表示取消禁言 |
-
-### 响应数据
-
-无
-
-## `set_group_anonymous_ban` 群组匿名用户禁言
-
-### 参数
-
-| 字段名 | 数据类型 | 默认值 | 说明 |
-| ----- | ------- | ----- | --- |
-| `group_id` | number | - | 群号 |
-| `anonymous` | object | - | 可选，要禁言的匿名用户对象（群消息上报的 `anonymous` 字段） |
-| `anonymous_flag` 或 `flag` | string | - | 可选，要禁言的匿名用户的 flag（需从群消息上报的数据中获得） |
-| `duration` | number | `30 * 60` | 禁言时长，单位秒，无法取消匿名用户禁言 |
-
-上面的 `anonymous` 和 `anonymous_flag` 两者任选其一传入即可，若都传入，则使用 `anonymous`。
-
-### 响应数据
-
-无
-
-## `set_group_whole_ban` 群组全员禁言
-
-### 参数
-
-| 字段名 | 数据类型 | 默认值 | 说明 |
-| ----- | ------- | ----- | --- |
-| `group_id` | number | - | 群号 |
-| `enable` | boolean | `true` | 是否禁言 |
-
-### 响应数据
-
-无
-
-## `set_group_admin` 群组设置管理员
-
-### 参数
-
-| 字段名 | 数据类型 | 默认值 | 说明 |
-| ----- | ------- | ----- | --- |
-| `group_id` | number | - | 群号 |
-| `user_id` | number | - | 要设置管理员的 QQ 号 |
-| `enable` | boolean | `true` | true 为设置，false 为取消 |
-
-### 响应数据
-
-无
-
-## `set_group_anonymous` 群组匿名
-
-### 参数
-
-| 字段名 | 数据类型 | 默认值 | 说明 |
-| ----- | ------- | ----- | --- |
-| `group_id` | number | - | 群号 |
-| `enable` | boolean | `true` | 是否允许匿名聊天 |
-
-### 响应数据
-
-无
-
-## `set_group_card` 设置群名片（群备注）
-
-### 参数
-
-| 字段名 | 数据类型 | 默认值 | 说明 |
-| ----- | ------- | ----- | --- |
-| `group_id` | number | - | 群号 |
-| `user_id` | number | - | 要设置的 QQ 号 |
-| `card` | string | 空 | 群名片内容，不填或空字符串表示删除群名片 |
-
-### 响应数据
-
-无
-
-## `set_group_name` 设置群名
-
-### 参数
-
-| 字段名   | 数据类型 | 说明 |
-| -------- | ------ | ---- |
-| `group_id` | number (int64) | 群号 |
-| `group_name` | string | 新群名 |
-
-### 响应数据
-
-无
-
-## `set_group_leave` 退出群组
-
-### 参数
-
-| 字段名 | 数据类型 | 默认值 | 说明 |
-| ----- | ------- | ----- | --- |
-| `group_id` | number | - | 群号 |
-| `is_dismiss` | boolean | `false` | 是否解散，如果登录号是群主，则仅在此项为 true 时能够解散 |
-
-### 响应数据
-
-无
-
-## `set_group_special_title` 设置群组专属头衔
-
-### 参数
-
-| 字段名 | 数据类型 | 默认值 | 说明 |
-| ----- | ------- | ----- | --- |
-| `group_id` | number | - | 群号 |
-| `user_id` | number | - | 要设置的 QQ 号 |
-| `special_title` | string | 空 | 专属头衔，不填或空字符串表示删除专属头衔 |
-| `duration` | number | `-1` | 专属头衔有效期，单位秒，-1 表示永久，不过此项似乎没有效果，可能是只有某些特殊的时间长度有效，有待测试 |
-
-### 响应数据
-
-无
-
-## `set_friend_add_request` 处理加好友请求
-
-### 参数
-
-| 字段名 | 数据类型 | 默认值 | 说明 |
-| ----- | ------- | ----- | --- |
-| `flag` | string | - | 加好友请求的 flag（需从上报的数据中获得） |
-| `approve` | boolean | `true` | 是否同意请求 |
-| `remark` | string | 空 | 添加后的好友备注（仅在同意时有效） |
-
-### 响应数据
-
-无
-
-## `set_group_add_request` 处理加群请求／邀请
-
-### 参数
-
-| 字段名 | 数据类型 | 默认值 | 说明 |
-| ----- | ------- | ----- | --- |
-| `flag` | string | - | 加群请求的 flag（需从上报的数据中获得） |
-| `sub_type` 或 `type` | string | - | `add` 或 `invite`，请求类型（需要和上报消息中的 `sub_type` 字段相符） |
-| `approve` | boolean | `true` | 是否同意请求／邀请 |
-| `reason` | string | 空 | 拒绝理由（仅在拒绝时有效） |
-
-### 响应数据
-
-无
-
-## `get_login_info` 获取登录号信息
-
-### 参数
 
 无
 
@@ -409,167 +210,382 @@
 
 | 字段名 | 数据类型 | 说明 |
 | ----- | ------- | --- |
-| `user_id` | number (int64) | QQ 号 |
-| `nickname` | string | QQ 昵称 |
+| `response` | object[ [messageInfo](#messageInfo-消息Response信息) ]  | 消息信息 |
 
-## `get_stranger_info` 获取陌生人信息
+
+
+## `send_image` 发送图片
 
 ### 参数
 
 | 字段名 | 数据类型 | 默认值 | 说明 |
 | ----- | ------- | ----- | --- |
-| `user_id` | number | - | QQ 号 |
-| `no_cache` | boolean | `false` | 是否不使用缓存（使用缓存可能更新不及时，但响应更快） |
+| `id` | string | - | 微信 ID 或微信群 ID |
+| `file` | string | - | 图片文件的本地路径 |
 
 ### 响应数据
 
 | 字段名 | 数据类型 | 说明 |
 | ----- | ------- | --- |
-| `user_id` | number (int64) | QQ 号 |
-| `nickname` | string | 昵称 |
-| `sex` | string | 性别，`male` 或 `female` 或 `unknown` |
-| `age` | number (int32) | 年龄 |
+| `response` | object[ [messageInfo](#messageInfo-消息Response信息) ]  | 消息信息 |
 
-## `get_friend_list` 获取好友列表
+
+
+## `send_voice` 发送语音
 
 ### 参数
+
+| 字段名 | 数据类型 | 默认值 | 说明 |
+| ----- | ------- | ----- | --- |
+| `id` | string | - | 微信 ID 或微信群 ID |
+| `file` | string | - | 音频文件的本地路径 |
+
+### 响应数据
+
+| 字段名 | 数据类型 | 说明 |
+| ----- | ------- | --- |
+| `response` | object[ [messageInfo](#messageInfo-消息Response信息) ]  | 消息信息 |
+
+
+
+## `send_video` 发送视频
+
+### 参数
+
+| 字段名 | 数据类型 | 默认值 | 说明 |
+| ----- | ------- | ----- | --- |
+| `id` | string | - | 微信 ID 或微信群 ID |
+| `file` | string | - | 视频文件的本地路径 |
+
+### 响应数据
+
+| 字段名 | 数据类型 | 说明 |
+| ----- | ------- | --- |
+| `response` | object[ [messageInfo](#messageInfo-消息Response信息) ]  | 消息信息 |
+
+
+
+## `send_file` 发送文件
+
+### 参数
+
+| 字段名 | 数据类型 | 默认值 | 说明 |
+| ----- | ------- | ----- | --- |
+| `id` | string | - | 微信 ID 或微信群 ID |
+| `file` | string | - | 文件的本地路径 |
+
+### 响应数据
+
+| 字段名 | 数据类型 | 说明 |
+| ----- | ------- | --- |
+| `response` | object[ [messageInfo](#messageInfo-消息Response信息) ]  | 消息信息 |
+
+
+
+## `send_share_link` 分享链接
+
+### 参数
+
+| 字段名 | 数据类型 | 默认值 | 说明 |
+| ----- | ------- | ----- | --- |
+| `id` | string | - | 微信 ID 或微信群 ID |
+| `shareInfo` | object[ [ShareInfo](#shareinfo-链接分享数据类型) ] | - | 分享链接的相关信息 |
+
+### 响应数据
+
+| 字段名 | 数据类型 | 说明 |
+| ----- | ------- | --- |
+| `response` | object[ [messageInfo](#messageInfo-消息Response信息) ]  | 消息信息 |
+
+
+## `send_share_miniprogram` 分享小程序
+
+### 参数
+
+| 字段名 | 数据类型 | 默认值 | 说明 |
+| ----- | ------- | ----- | --- |
+| `id` | string | - | 微信 ID 或微信群 ID |
+| `shareInfo` | object[miniProgramShareInfo] | - | 分享小程序的相关信息 |
+
+### 响应数据
+
+| 字段名 | 数据类型 | 说明 |
+| ----- | ------- | --- |
+| `response` | object[ [messageInfo](#messageInfo-消息Response信息) ]  | 消息信息 |
+
+
+## `send_contact_card` 分享名片
+
+### 参数
+
+| 字段名 | 数据类型 | 默认值 | 说明 |
+| ----- | ------- | ----- | --- |
+| `id` | string | - | 微信 ID 或微信群 ID |
+| `payload` | string | - | 分享名片联系人的微信 ID |
+
+### 响应数据
+
+| 字段名 | 数据类型 | 说明 |
+| ----- | ------- | --- |
+| `response` | object[ [messageInfo](#messageInfo-消息Response信息) ]  | 消息信息 |
+
+
+
+## `get_contact_qrcode` 获取我的二维码名片
+
+### 参数
+
+| 字段名 | 数据类型 | 默认值 | 说明 |
+| ----- | ------- | ----- | --- |
+| `userName` | string | - | 微信 ID |
+| `greeting` | string | - | 验证请求 |
+
+### 响应数据
+
+| 字段名 | 数据类型 | 说明 |
+| ----- | ------- | --- |
+| `qrcode` | string  | 二维码图片base64 |
+
+## `search_contact` 获取微信用户信息
+
+### 参数
+
+| 字段名 | 数据类型 | 默认值 | 说明 |
+| ----- | ------- | ----- | --- |
+| `userName` | string | - | 微信 ID |
+
+### 响应数据
+
+| 字段名 | 数据类型 | 说明 |
+| ----- | ------- | --- |
+| `contact` | object[ [contactInfo](#shareinfo-链接分享数据类型) ]  | 用户信息 |
+
+## `add_contact` 发起朋友请求
+
+### 参数
+
+| 字段名 | 数据类型 | 默认值 | 说明 |
+| ----- | ------- | ----- | --- |
+| `userName` | string | - | 微信 ID |
+| `greeting` | string | - | 验证请求 |
+
+### 响应数据
 
 无
 
-### 响应数据
-
-响应内容为 JSON 数组，每个元素如下：
-
-| 字段名 | 数据类型 | 说明 |
-| ----- | ------- | --- |
-| `user_id` | number (int64) | QQ 号 |
-| `nickname` | string | 昵称 |
-| `remark` | string | 备注名 |
-
-## `get_group_info` 获取群信息
+## `delete_contact` 单向删除朋友
 
 ### 参数
 
 | 字段名 | 数据类型 | 默认值 | 说明 |
 | ----- | ------- | ----- | --- |
-| `group_id` | number | - | 群号 |
-| `no_cache` | boolean | `false` | 是否不使用缓存（使用缓存可能更新不及时，但响应更快） |
+| `userName` | string | - | 微信 ID |
 
 ### 响应数据
-
-| 字段名 | 数据类型 | 说明 |
-| ----- | ------- | --- |
-| `group_id` | number (int64) | 群号 |
-| `group_name` | string | 群名称 |
-| `member_count` | number (int32) | 成员数 |
-| `max_member_count` | number (int32) | 最大成员数（群容量） |
-
-## `get_group_list` 获取群列表
-
-### 参数
 
 无
 
-### 响应数据
-
-响应内容为 JSON 数组，每个元素和上面的 `get_group_info` 接口相同。
-
-## `get_group_member_info` 获取群成员信息
+## `get_contact` 获取微信用户信息
 
 ### 参数
 
 | 字段名 | 数据类型 | 默认值 | 说明 |
 | ----- | ------- | ----- | --- |
-| `group_id` | number | - | 群号 |
-| `user_id`  | number | - | QQ 号 |
-| `no_cache` | boolean | `false` | 是否不使用缓存（使用缓存可能更新不及时，但响应更快） |
+| `userName` | string | - | 微信 ID |
 
 ### 响应数据
 
 | 字段名 | 数据类型 | 说明 |
 | ----- | ------- | --- |
-| `group_id` | number (int64) | 群号 |
-| `user_id` | number (int64) | QQ 号 |
-| `nickname` | string | 昵称 |
-| `card` | string | 群名片／备注 |
-| `sex` | string | 性别，`male` 或 `female` 或 `unknown` |
-| `age` | number (int32) | 年龄 |
-| `area` | string | 地区 |
-| `join_time` | number (int32) | 加群时间戳 |
-| `last_sent_time` | number (int32) | 最后发言时间戳 |
-| `level` | string | 成员等级 |
-| `role` | string | 角色，`owner` 或 `admin` 或 `member` |
-| `unfriendly` | boolean | 是否不良记录成员 |
-| `title` | string | 专属头衔 |
-| `title_expire_time` | number (int32) | 专属头衔过期时间戳 |
-| `card_changeable` | boolean | 是否允许修改群名片 |
+| `contact` | object[ [contactInfo](#shareinfo-链接分享数据类型) ]  | 用户信息 |
 
-## `get_group_member_list` 获取群成员列表
+
+## `accept_contact` 接收好友请求
 
 ### 参数
 
 | 字段名 | 数据类型 | 默认值 | 说明 |
 | ----- | ------- | ----- | --- |
-| `group_id` | number (int64) | - | 群号 |
+| `stranger` | string | - | 好友申请 encryptusername |
+| `ticket` | string | - | 好友申请 ticket |
 
 ### 响应数据
 
-响应内容为 JSON 数组，每个元素的内容和上面的 `get_group_member_info` 接口相同，但对于同一个群组的同一个成员，获取列表时和获取单独的成员信息时，某些字段可能有所不同，例如 `area`、`title` 等字段在获取列表时无法获得，具体应以单独的成员信息为准。
+无
 
-## `get_group_honor_info` 获取群荣誉信息
+## `update_nickname` 更新微信昵称
 
 ### 参数
 
 | 字段名 | 数据类型 | 默认值 | 说明 |
 | ----- | ------- | ----- | --- |
-| `group_id` | number (int64) | - | 群号 |
-| `type` | string | - | 要获取的群荣誉类型，可传入 `talkative` `performer` `legend` `strong_newbie` `emotion` 以分别获取单个类型的群荣誉数据，或传入 `all` 获取所有数据 |
+| `nickname` | string | - | 微信昵称 |
 
 ### 响应数据
 
-| 字段名 | 数据类型 | 说明 |
-| ----- | ------- | --- |
-| `group_id` | number (int64) | 群号 |
-| `current_talkative` | object | 当前龙王，仅 `type` 为 `talkative` 或 `all` 时有数据 |
-| `talkative_list` | array | 历史龙王，仅 `type` 为 `talkative` 或 `all` 时有数据 |
-| `performer_list` | array | 群聊之火，仅 `type` 为 `performer` 或 `all` 时有数据 |
-| `legend_list` | array | 群聊炽焰，仅 `type` 为 `legend` 或 `all` 时有数据 |
-| `strong_newbie_list` | array | 冒尖小春笋，仅 `type` 为 `strong_newbie` 或 `all` 时有数据 |
-| `emotion_list` | array | 快乐之源，仅 `type` 为 `emotion` 或 `all` 时有数据 |
+无
 
-其中 `current_talkative` 字段的内容如下：
-
-| 字段名 | 数据类型 | 说明 |
-| ----- | ------- | --- |
-| `user_id` | number (int64) | QQ 号 |
-| `nickname` | string | 昵称 |
-| `avatar` | string | 头像 URL |
-| `day_count` | number (int32) | 持续天数 |
-
-其它各 `*_list` 的每个元素是一个 JSON 对象，内容如下：
-
-| 字段名 | 数据类型 | 说明 |
-| ----- | ------- | --- |
-| `user_id` | number (int64) | QQ 号 |
-| `nickname` | string | 昵称 |
-| `avatar` | string | 头像 URL |
-| `description` | string | 荣誉描述 |
-
-## `get_cookies` 获取 Cookies
+## `update_signature` 更新微信个性签名
 
 ### 参数
 
 | 字段名 | 数据类型 | 默认值 | 说明 |
 | ----- | ------- | ----- | --- |
-| `domain` | string | 空 | 需要获取 cookies 的域名 |
+| `signature` | string | - | 个性签名 |
+
+### 响应数据
+
+无
+
+## `zombie_test` 查询好友关系
+
+### 参数
+
+| 字段名 | 数据类型 | 默认值 | 说明 |
+| ----- | ------- | ----- | --- |
+| `userName` | string | - | 微信 ID / QQ / 手机号 |
 
 ### 响应数据
 
 | 字段名 | 数据类型 | 说明 |
 | ----- | ------- | --- |
-| `cookies` | string | Cookies |
+| `status` | number | 好友状态[0：陌生人 1：通讯录好友 2：单向被删除好友【僵尸好友】] |
 
-## `get_csrf_token` 获取 CSRF Token
+## `update_contact_remark` 更新好友备注
+
+### 参数
+
+| 字段名 | 数据类型 | 默认值 | 说明 |
+| ----- | ------- | ----- | --- |
+| `userName` | string | - | 微信 ID |
+| `remark` | string | - | 备注 |
+
+### 响应数据
+
+无
+
+## `create_chatroom` 创建群聊
+
+### 参数
+
+| 字段名 | 数据类型 | 默认值 | 说明 |
+| ----- | ------- | ----- | --- |
+| `userNameList` | string[] | - | 微信 ID 数组 |
+
+### 响应数据
+
+| 字段名 | 数据类型 | 说明 |
+| ----- | ------- | --- |
+| `chatroom` | object[ [contactInfo](#chatroominfo-联系人信息数据类型) ] | 群聊信息 |
+
+## `get_chatroom_members` 获取群聊成员列表
+
+### 参数
+
+| 字段名 | 数据类型 | 默认值 | 说明 |
+| ----- | ------- | ----- | --- |
+| `roomId` | string | - | 微信群 ID |
+
+### 响应数据
+
+| 字段名 | 数据类型 | 说明 |
+| ----- | ------- | --- |
+| `memberList` | object[[memberList](#memberlist-群聊用户列表数据类型)] | 群聊成员列表 |
+
+## `get_chatroom_member` 获取群聊指定成员信息
+
+### 参数
+
+| 字段名 | 数据类型 | 默认值 | 说明 |
+| ----- | ------- | ----- | --- |
+| `roomId` | string | - | 微信群 ID |
+| `userName` | string | - | 微信 ID |
+
+### 响应数据
+
+| 字段名 | 数据类型 | 说明 |
+| ----- | ------- | --- |
+| `contact` | object[ [contactInfo](#shareinfo-链接分享数据类型) ] | 用户信息 |
+
+## `get_chatroom_qrcode` 获取群聊二维码
+
+### 参数
+
+| 字段名 | 数据类型 | 默认值 | 说明 |
+| ----- | ------- | ----- | --- |
+| `roomId` | string | - | 微信群 ID |
+
+### 响应数据
+
+| 字段名 | 数据类型 | 说明 |
+| ----- | ------- | --- |
+| `qrcode` | string | 二维码图片base64 |
+
+## `set_chatroom_announcement` 发布群聊公告
+
+### 参数
+
+| 字段名 | 数据类型 | 默认值 | 说明 |
+| ----- | ------- | ----- | --- |
+| `roomId` | string | - | 微信群 ID |
+| `announcement` | string | - | 群聊公告 |
+
+### 响应数据
+
+无
+
+## `set_chatroom_name` 设置群聊名称
+
+### 参数
+
+| 字段名 | 数据类型 | 默认值 | 说明 |
+| ----- | ------- | ----- | --- |
+| `roomId` | string | - | 微信群 ID |
+| `roomName` | string | - | 群聊名称 |
+
+### 响应数据
+
+无
+
+## `quit_chatroom` 离开群聊
+
+### 参数
+
+| 字段名 | 数据类型 | 默认值 | 说明 |
+| ----- | ------- | ----- | --- |
+| `roomId` | string | - | 微信群 ID |
+
+### 响应数据
+
+无
+
+## `add_chatroom_member` 添加好友进入群聊
+
+### 参数
+
+| 字段名 | 数据类型 | 默认值 | 说明 |
+| ----- | ------- | ----- | --- |
+| `roomId` | string | - | 微信群 ID |
+| `userName` | string | - | 微信 ID |
+
+### 响应数据
+
+无
+
+## `invite_chatroom_member` 邀请好友进入群聊
+
+### 参数
+
+| 字段名 | 数据类型 | 默认值 | 说明 |
+| ----- | ------- | ----- | --- |
+| `roomId` | string | - | 微信群 ID |
+| `userName` | string | - | 微信 ID |
+
+### 响应数据
+
+无
+
+## `get_labelList` 获取好友标签列表
 
 ### 参数
 
@@ -579,139 +595,287 @@
 
 | 字段名 | 数据类型 | 说明 |
 | ----- | ------- | --- |
-| `token` | number (int32) | CSRF Token |
+| `labelList` | string[labelInfo] | 标签列表信息 |
 
-## `get_credentials` 获取 QQ 相关接口凭证
-
-即上面两个接口的合并。
+## `add_label` 添加好友标签
 
 ### 参数
 
 | 字段名 | 数据类型 | 默认值 | 说明 |
 | ----- | ------- | ----- | --- |
-| `domain` | string | 空 | 需要获取 cookies 的域名 |
+| `label` | string | - | 标签名称 |
 
 ### 响应数据
 
 | 字段名 | 数据类型 | 说明 |
 | ----- | ------- | --- |
-| `cookies` | string | Cookies |
-| `csrf_token` | number (int32) | CSRF Token |
+| `labelId` | number | 标签 ID |
 
-## `get_record` 获取语音
-
-> **提示**：要使用此接口，通常需要安装 ffmpeg，请参考 OneBot 实现的相关说明。
+## `remove_label` 移除好友标签
 
 ### 参数
 
 | 字段名 | 数据类型 | 默认值 | 说明 |
 | ----- | ------- | ----- | --- |
-| `file` | string | - | 收到的语音文件名（消息段的 `file` 参数），如 `0B38145AA44505000B38145AA4450500.silk` |
-| `out_format`  | string | - | 要转换到的格式，目前支持 `mp3`、`amr`、`wma`、`m4a`、`spx`、`ogg`、`wav`、`flac` |
+| `labelId` | string | - | 标签 ID |
 
 ### 响应数据
 
-| 字段名 | 数据类型 | 说明 |
-| ----- | ------- | --- |
-| `file` | string | 转换后的语音文件路径，如 `/home/somebody/cqhttp/data/record/0B38145AA44505000B38145AA4450500.mp3` |
+无
 
-## `get_image` 获取图片
+## `set_contact_label` 设置通讯录标签
 
 ### 参数
 
 | 字段名 | 数据类型 | 默认值 | 说明 |
 | ----- | ------- | ----- | --- |
-| `file` | string | - | 收到的图片文件名（消息段的 `file` 参数），如 `6B4DE3DFD1BD271E3297859D41C530F5.jpg` |
+| `userName` | string | - | 微信 ID |
+| `labelList` | string[] | - | 标签 ID 数组|
 
 ### 响应数据
-
-| 字段名 | 数据类型 | 说明 |
-| ----- | ------- | --- |
-| `file` | string | 下载后的图片文件路径，如 `/home/somebody/cqhttp/data/image/6B4DE3DFD1BD271E3297859D41C530F5.jpg` |
-
-## `can_send_image` 检查是否可以发送图片
-
-### 参数
 
 无
 
-### 响应数据
-
-| 字段名 | 数据类型 | 说明 |
-| ----- | ------- | --- |
-| `yes` | boolean | 是或否 |
-
-## `can_send_record` 检查是否可以发送语音
-
-### 参数
-
-无
-
-### 响应数据
-
-| 字段名 | 数据类型 | 说明 |
-| ----- | ------- | --- |
-| `yes` | boolean | 是或否 |
-
-## `get_status` 获取运行状态
-
-### 参数
-
-无
-
-### 响应数据
-
-| 字段名 | 数据类型 | 说明 |
-| ----- | ------- | --- |
-| `online` | boolean | 当前 QQ 在线，`null` 表示无法查询到在线状态 |
-| `good` | boolean | 状态符合预期，意味着各模块正常运行、功能正常，且 QQ 在线 |
-| …… | - | OneBot 实现自行添加的其它内容 |
-
-通常情况下建议只使用 `online` 和 `good` 这两个字段来判断运行状态，因为根据 OneBot 实现的不同，其它字段可能完全不同。
-
-## `get_version_info` 获取版本信息
-
-### 参数
-
-无
-
-### 响应数据
-
-| 字段名 | 数据类型 | 说明 |
-| ----- | ------- | --- |
-| `app_name` | string | 应用标识，如 `mirai-native` |
-| `app_version` | string | 应用版本，如 `1.2.3` |
-| `protocol_version` | string | OneBot 标准版本，如 `v11` |
-| …… | - | OneBot 实现自行添加的其它内容 |
-
-## `set_restart` 重启 OneBot 实现
-
-由于重启 OneBot 实现同时需要重启 API 服务，这意味着当前的 API 请求会被中断，因此需要异步地重启，接口返回的 `status` 是 `async`。
+## `sns_get_timeline` 获取朋友圈动态列表
 
 ### 参数
 
 | 字段名 | 数据类型 | 默认值 | 说明 |
 | ----- | ------- | ----- | --- |
-| `delay` | number | `0` | 要延迟的毫秒数，如果默认情况下无法重启，可以尝试设置延迟为 2000 左右 |
+| `maxId` | string | - | 微信 ID |
 
 ### 响应数据
 
-无
+| 字段名 | 数据类型 | 说明 |
+| ----- | ------- | --- |
+| `momentList` | object[[MomentList](#momentlist-朋友圈动态列表数据类型)] | 朋友圈动态列表 |
 
-## `clean_cache` 清理缓存
-
-用于清理积攒了太多的缓存文件。
+## `sns_get_moment` 朋友圈动态详情
 
 ### 参数
 
-无
+| 字段名 | 数据类型 | 默认值 | 说明 |
+| ----- | ------- | ----- | --- |
+| `momentId` | string | - | 朋友圈动态 ID |
+
+### 响应数据
+
+| 字段名 | 数据类型 | 说明 |
+| ----- | ------- | --- |
+| `snsMoment` | object[[snsMoment](#snsmoment-朋友圈动态详情数据类型)] | 朋友圈动态详情 |
+
+## `sns_send_text_moment` 发送朋友圈文字动态
+
+### 参数
+
+| 字段名 | 数据类型 | 默认值 | 说明 |
+| ----- | ------- | ----- | --- |
+| `content` | string  | - | 朋友圈动态文字内容 |
+| `options` | object[[SNSMonentOption](#snsmonentoption-朋友圈动态设置数据类型)]  | - | 朋友圈动态设置 |
+
+### 响应数据
+
+| 字段名 | 数据类型 | 说明 |
+| ----- | ------- | --- |
+| `snsMoment` | object[[snsMoment](#snsmoment-朋友圈动态详情数据类型)] | 朋友圈动态详情 |
+
+## `sns_send_image_moment` 发送朋友圈文字动态
+
+### 参数
+
+| 字段名 | 数据类型 | 默认值 | 说明 |
+| ----- | ------- | ----- | --- |
+| `content` | object[[SNSImageMoment](#snsimagemoment-朋友圈图片动态数据类型)]  | - | 朋友圈动态图片内容 |
+| `options` | object[[SNSMonentOption](#snsmonentoption-朋友圈动态设置数据类型)]  | - | 朋友圈动态设置 |
+
+### 响应数据
+
+| 字段名 | 数据类型 | 说明 |
+| ----- | ------- | --- |
+| `snsMoment` | object[[snsMoment](#snsmoment-朋友圈动态详情数据类型)] | 朋友圈动态详情 |
+
+## `sns_send_url_moment` 发送朋友圈链接动态
+
+### 参数
+
+| 字段名 | 数据类型 | 默认值 | 说明 |
+| ----- | ------- | ----- | --- |
+| `content` | object[ [ShareInfo](#shareinfo-链接分享数据类型) ]  | - | 朋友圈动态链接内容 |
+| `options` | object[[SNSMonentOption](#snsmonentoption-朋友圈动态设置数据类型)]  | - | 朋友圈动态设置 |
+
+### 响应数据
+
+| 字段名 | 数据类型 | 说明 |
+| ----- | ------- | --- |
+| `snsMoment` | object[[snsMoment](#snsmoment-朋友圈动态详情数据类型)] | 朋友圈动态详情 |
+
+## `sns_remove_moment` 移除朋友圈动态
+
+### 参数
+
+| 字段名 | 数据类型 | 默认值 | 说明 |
+| ----- | ------- | ----- | --- |
+| `content` | object[ [ShareInfo](#shareinfo-链接分享数据类型) ]  | - | 朋友圈动态链接内容 |
+| `options` | object[[SNSMonentOption](#snsmonentoption-朋友圈动态设置数据类型)]  | - | 朋友圈动态设置 |
 
 ### 响应数据
 
 无
+
+## `sns_send_comment` 评论朋友圈动态
+
+### 参数
+
+| 字段名 | 数据类型 | 默认值 | 说明 |
+| ----- | ------- | ----- | --- |
+| `momentId` | string  | - | 朋友圈动态 ID |
+| `momentOwnerUserName` | string  | - | 朋友圈动态所有者 |
+| `commentText` | string  | - | 评论文本 |
+| `replyTo` | object[[replyComment](#replycomment-朋友圈动态详情数据类型)]  | - | 回复动态评论 |
+
+### 响应数据
+
+| 字段名 | 数据类型 | 说明 |
+| ----- | ------- | --- |
+| `snsMoment` | object[[snsMoment](#snsmoment-朋友圈动态详情数据类型)] | 朋友圈动态详情 |
+
+
+## `sns_like_moment` 朋友圈动态点赞
+
+### 参数
+
+| 字段名 | 数据类型 | 默认值 | 说明 |
+| ----- | ------- | ----- | --- |
+| `momentId` | string  | - | 朋友圈动态 ID |
+| `momentOwnerUserName` | string  | - | 朋友圈动态所有者 |
+
+### 响应数据
+
+| 字段名 | 数据类型 | 说明 |
+| ----- | ------- | --- |
+| `snsMoment` | object[[snsMoment](#snsmoment-朋友圈动态详情数据类型)] | 朋友圈动态详情 |
+
+
+## `sns_unlike_moment` 朋友圈动态取消点赞
+
+### 参数
+
+| 字段名 | 数据类型 | 默认值 | 说明 |
+| ----- | ------- | ----- | --- |
+| `momentId` | string  | - | 朋友圈动态 ID |
+
+### 响应数据
+
+无
+
+## `sns_remove_moment_comment` 朋友圈动态删除评论
+
+### 参数
+
+| 字段名 | 数据类型 | 默认值 | 说明 |
+| ----- | ------- | ----- | --- |
+| `momentId` | string  | - | 朋友圈动态 ID |
+| `commentId` | string  | - | 朋友圈动态评论 ID |
+
+### 响应数据
+
+无
+
+## `sns_make_moment_private` 朋友圈动态设为私密
+
+### 参数
+
+| 字段名 | 数据类型 | 默认值 | 说明 |
+| ----- | ------- | ----- | --- |
+| `momentId` | string  | - | 朋友圈动态 ID |
+
+### 响应数据
+
+无
+
+## `sns_make_moment_public` 朋友圈动态设为公开
+
+### 参数
+
+| 字段名 | 数据类型 | 默认值 | 说明 |
+| ----- | ------- | ----- | --- |
+| `momentId` | string  | - | 朋友圈动态 ID |
+
+### 响应数据
+
+无
+
+
+## 数据类型结构定义
+
+### `messageInfo` 消息Response信息数据类型
+
+| 字段名 | 数据类型 | 说明 |
+| ----- | ------- | --- |
+| `msgid` | number  | 消息 ID |
+| `messagerevokeinfo` | object[ [messageRevokeInfo](#messagerevokeinfo-消息撤回信息) ]  | 用于撤销的相关信息 |
+
+### `messageRevokeInfo` 消息撤回信息数据类型
+
+| 字段名 | 数据类型 | 说明 |
+| ----- | ------- | --- |
+| `clientMsgId` | string  | 客户端消息 ID |
+| `newClientMsgId` | string  | 新的客户端消息 ID |
+| `createTime` | number  | 创建时间 |
+
+### `ShareInfo` 链接分享数据类型
+
+| 字段名 | 数据类型 | 说明 |
+| ----- | ------- | --- |
+| `title` | string  | 标题 |
+| `url` | string  | 链接 |
+| `desc` | string  | 简介 |
+| `thumburl` | string  | 本地缩略图片路径 |
+
+### `contactInfo` 联系人信息数据类型
+
+//todo
+
+### `chatroomInfo` 群聊信息数据类型
+
+//todo
+
+### `memberList` 群聊用户列表数据类型
+
+//todo
+
+### `MomentList` 朋友圈动态列表数据类型
+
+//todo
+
+### `snsMoment` 朋友圈动态详情数据类型
+
+//todo
+
+### `replyComment` 朋友圈动态评论数据类型
+
+| 字段名 | 数据类型 | 说明 |
+| ----- | ------- | --- |
+| `replyCommentId` | string  | 朋友圈动态评论 ID |
+| `replyCommentNickName` | string  | 朋友圈动态评论用户昵称 |
+| `replyCommentUsername` | string  | 朋友圈动态评论用户 ID |
+
+### `SNSMonentOption` 朋友圈动态设置数据类型
+
+| 字段名 | 数据类型 | 说明 |
+| ----- | ------- | --- |
+| `isPrivate` | boolean  | 朋友圈动态是否私密 |
+| `cannotseeusernameList` | string[]  | 朋友圈动态不可见好友列表 |
+| `canseeusernameList` | string[]  | 朋友圈动态可见好友列表 ID |
+| `atusernameList` | string[]  | 朋友圈动态提醒好友列表 |
+
+### `SNSImageMoment` 朋友圈图片动态数据类型
+
+| 字段名 | 数据类型 | 说明 |
+| ----- | ------- | --- |
+| `imageFilePathList` | string[]   | 图片本地路径 |
+| `description` | string | 简介 |
+
+
 
 <hr>
-
-| 上一节 | 下一节 |
-| --- | --- |
-| [API 概述](README.md) | [隐藏 API](hidden.md) |
