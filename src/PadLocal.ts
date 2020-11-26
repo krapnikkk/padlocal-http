@@ -29,21 +29,21 @@ const PadLocal = {
                 onLoginStart: (loginType: LoginType) => {
                     console.log("start login with type: ", loginType);
                 },
-                onOneClickEvent: (oneClickEvent: QRCodeEvent) => {
-                    const oneClickEventObject = oneClickEvent.toObject();
+                onOneClickEvent: (qrCodeEvent: QRCodeEvent) => {
+                    const oneClickEventObject = qrCodeEvent.toObject();
                     console.log("on one click event: ", JSON.stringify(oneClickEventObject));
                     if (oneClickEventObject.status == 1) {
-                        resolve(oneClickEventObject);
+                        resolve({qrCodeEvent});
                     }
                 },
                 onQrCodeEvent: (qrCodeEvent: QRCodeEvent) => {
                     console.log("on qr code event: ", JSON.stringify(qrCodeEvent.toObject()));
-                    resolve(qrCodeEvent.toObject());
+                    resolve({qrCodeEvent});
                 },
                 onLoginSuccess(contact: Contact) {
                     PadLocal.isLogin = true;
                     console.log("on login success: ", JSON.stringify(contact.toObject()));
-                    resolve(contact.toObject());
+                    resolve({contact});
                 },
                 onSync: (_syncEvent: SyncEvent) => {
                     for (const contact of _syncEvent.getContactList()) {

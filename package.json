@@ -1,6 +1,6 @@
 {
   "name": "padlocal-http",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "make http api for Padlocal ts client",
   "keywords": [
     "padlocal",
