@@ -350,6 +350,15 @@ app.post("/api/sns_get_timeline", async (req: Request, res: Response) => {
     });
 });
 
+app.post("/api/sns_get_user_timeline", async (req: Request, res: Response) => {
+    let { maxId,userId } = req.body;
+    let result = await PadLocal.snsGetUserTimeline(maxId,userId);
+    res.json({
+        result: result,
+        success: true
+    });
+});
+
 app.post("/api/sns_get_moment", async (req: Request, res: Response) => {
     let { momentId } = req.body;
     let result = await PadLocal.snsGetMoment(momentId);
@@ -459,7 +468,8 @@ export const install = (robotConfig: PadLocalClientConfig, serverConfig: ServerC
     PadLocal.install(robotConfig);
     MessageHandler.postUrl = postUrl;
     app.listen(port, async () => {
-        console.log('running on http://127.0.0.1:' + serverConfig.port);
+        console.log('Padlocal-http listen on http://127.0.0.1:' + serverConfig.port);
+        console.log(`Post url :${postUrl}`)
     });
 }
 

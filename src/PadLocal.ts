@@ -1,6 +1,6 @@
 import { PadLocalClient } from "padlocal-client-ts";
-import { Contact, LoginPolicy, LoginType, Message, MessageRevokeInfo, QRCodeEvent, SendTextMessageResponse, SendVideoMessageResponse, SyncEvent } from "padlocal-client-ts/dist/proto/padlocal_pb";
-import { genIdempotentId, stringifyPB } from "padlocal-client-ts/dist/utils/Utils";
+import { Contact, LoginPolicy, LoginType, Message, MessageRevokeInfo, QRCodeEvent, SyncEvent } from "padlocal-client-ts/dist/proto/padlocal_pb";
+import { genIdempotentId } from "padlocal-client-ts/dist/utils/Utils";
 import * as pb from "padlocal-client-ts/dist/proto/padlocal_pb";
 import { IMessage, IMessageRevokeInfo, Media, miniProgramShareInfo, PadLocalClientConfig, ReplyComment, ShareInfo, SNSImageMoment, SNSMomentType, SNSMonentOption } from "./interface";
 import fs from "fs";
@@ -11,7 +11,6 @@ import MessageHandler from "./MessageHandler";
 let client: PadLocalClient;
 const PadLocal = {
     isLogin: false,
-    messageHandler: null,
     install: (config: PadLocalClientConfig) => {
         try {
             let { serverHost, serverPort, token, serverCAFilePath } = config;
@@ -30,38 +29,39 @@ const PadLocal = {
                     console.log("start login with type: ", loginType);
                 },
                 onOneClickEvent: (qrCodeEvent: QRCodeEvent) => {
-                    const oneClickEventObject = qrCodeEvent.toObject();
-                    console.log("on one click event: ", JSON.stringify(oneClickEventObject));
-                    if (oneClickEventObject.status == 1) {
-                        resolve({qrCodeEvent});
+                    let response = qrCodeEvent.toObject();
+                    console.log("on one click event: ", JSON.stringify(response));
+                    if (response.status == 1) {
+                        resolve({ response });
                     }
                 },
                 onQrCodeEvent: (qrCodeEvent: QRCodeEvent) => {
+                    let response = qrCodeEvent.toObject();
                     console.log("on qr code event: ", JSON.stringify(qrCodeEvent.toObject()));
-                    resolve({qrCodeEvent});
+                    resolve({ response });
                 },
                 onLoginSuccess(contact: Contact) {
+                    client.on("message", (messageList: Message[]) => {
+                        for (const message of messageList) {
+                            // console.log("on message: ", JSON.stringify(message.toObject()));
+                            MessageHandler.post(message.toObject())
+                        }
+                    });
                     PadLocal.isLogin = true;
-                    console.log("on login success: ", JSON.stringify(contact.toObject()));
-                    resolve({contact});
+                    let response = contact.toObject();
+                    resolve({ response });
                 },
                 onSync: (_syncEvent: SyncEvent) => {
-                    for (const contact of _syncEvent.getContactList()) {
-                        console.log("login on sync contact: ", JSON.stringify(contact.toObject()));
-                    }
+                    // for (const contact of _syncEvent.getContactList()) {
+                    //     console.log("login on sync contact: ", JSON.stringify(contact.toObject()));
+                    // }
 
-                    for (const message of _syncEvent.getMessageList()) {
-                        console.log("login on sync message: ", JSON.stringify(message.toObject()));
-                    }
+                    // for (const message of _syncEvent.getMessageList()) {
+                    //     console.log("login on sync message: ", JSON.stringify(message.toObject()));
+                    // }
                 }
             }).catch(e => {
                 reject(e);
-            });
-            client.on("message", (messageList: Message[]) => {
-                for (const message of messageList) {
-                    console.log("on message: ", JSON.stringify(message.toObject()));
-                    MessageHandler.post({message})
-                }
             });
 
             // client.on("contact", (contactList: Contact[]) => {
@@ -79,9 +79,10 @@ const PadLocal = {
     logout: async () => {
         return new Promise(async (resolve) => {
             if (client) {
-                const response = await client.api.logout();
+                const logoutResponse = await client.api.logout();
                 PadLocal.isLogin = false;
-                resolve({response})
+                let response = logoutResponse.toObject();
+                resolve({ response })
             }
         })
     },
@@ -90,20 +91,21 @@ const PadLocal = {
             try {
                 let { id, message } = msg;
                 let idempotentId = genIdempotentId();
-                const response: SendTextMessageResponse = await client.api.sendTextMessage(
+                let sendTextMessageResponse = await client.api.sendTextMessage(
                     idempotentId,
                     id,
                     message,
                     atUserList
                 );
-                resolve({response})
+                let response = sendTextMessageResponse.toObject();
+                resolve({ response })
             } catch (e) {
                 resolve(e);
             }
 
         })
     },
-    revokeMessage: async (msgId:string,toUserName:string,revokeInfo: IMessageRevokeInfo): Promise<Object> => {
+    revokeMessage: async (msgId: string, toUserName: string, revokeInfo: IMessageRevokeInfo): Promise<Object> => {
         return new Promise(async (resolve) => {
             try {
                 let { clientMsgId, newClientMsgId, createTime } = revokeInfo;
@@ -125,26 +127,27 @@ const PadLocal = {
         return new Promise(async (resolve) => {
             try {
                 const fileData: Buffer = fs.readFileSync(file);
-                let response: SendVideoMessageResponse;
+                let sendVideoMessageResponse;
                 switch (type) {
                     case Media.Video:
-                        response = await client.api.sendVideoMessage(genIdempotentId(), id, fileData);
+                        sendVideoMessageResponse = await client.api.sendVideoMessage(genIdempotentId(), id, fileData);
                         break;
                     case Media.Image:
-                        response = await client.api.sendImageMessage(genIdempotentId(), id, fileData);
+                        sendVideoMessageResponse = await client.api.sendImageMessage(genIdempotentId(), id, fileData);
                         break;
                     case Media.Audio:
                         const audioMetadata = await parseBuffer(fileData);
                         const duration = audioMetadata.format.duration as number;
                         const milliSeconds = secondsToMilliSeconds(duration);
-                        response = await client.api.sendVoiceMessage(genIdempotentId(), id, fileData, milliSeconds)
+                        sendVideoMessageResponse = await client.api.sendVoiceMessage(genIdempotentId(), id, fileData, milliSeconds)
                         break;
                     default:
                         const fileName = file.split("/").pop() as string;
-                        response = await client.api.sendFileMessage(genIdempotentId(), id, fileData, fileName);
+                        sendVideoMessageResponse = await client.api.sendFileMessage(genIdempotentId(), id, fileData, fileName);
                         break;
                 }
-                resolve(response.toObject());
+                let response = sendVideoMessageResponse.toObject()
+                resolve({ response });
             } catch (e) {
                 resolve(e);
             }
@@ -203,8 +206,9 @@ const PadLocal = {
             try {
                 const searchRes = await client.api.searchContact(userName);
                 const contact = searchRes.getContact()!;
-                const response = await client.api.sendContactCardMessage(genIdempotentId(), id, contact);
-                resolve(response.toObject());
+                const sendContactCardMessageResponse = await client.api.sendContactCardMessage(genIdempotentId(), id, contact);
+                let response = sendContactCardMessageResponse.toObject()
+                resolve({ response });
             } catch (e) {
                 resolve(e);
             }
@@ -241,7 +245,8 @@ const PadLocal = {
         return new Promise(async (resolve) => {
             try {
                 const contact = await client.api.getContact(userName);
-                resolve({contact});
+                let response = contact.toObject();
+                resolve({ response });
             } catch (e) {
                 resolve(e);
             }
@@ -273,7 +278,8 @@ const PadLocal = {
         return new Promise(async (resolve) => {
             try {
                 const contact = await client.api.searchContact(userName);
-                resolve({contact});
+                let response = contact.toObject();
+                resolve({ response });
             } catch (e) {
                 resolve(e);
             }
@@ -324,7 +330,8 @@ const PadLocal = {
             try {
                 const id = genIdempotentId();
                 const chatroom = await client.api.createChatRoom(id, userNameList);
-                resolve({chatroom});
+                let response = chatroom.toObject();
+                resolve({ response });
             } catch (e) {
                 resolve(e);
             }
@@ -334,7 +341,10 @@ const PadLocal = {
         return new Promise(async (resolve) => {
             try {
                 const memberList = await client.api.getChatRoomMembers(roomId);
-                resolve({ memberList });
+                let response = memberList.map((menber) => {
+                        return menber.toObject();
+                })
+                resolve({ response });
             } catch (e) {
                 resolve(e);
             }
@@ -355,7 +365,8 @@ const PadLocal = {
         return new Promise(async (resolve) => {
             try {
                 const contact = await client.api.getChatRoomMember(roomId, userName);
-                resolve({contact});
+                let response = contact.toObject();
+                resolve({ response });
             } catch (e) {
                 resolve(e);
             }
@@ -464,8 +475,24 @@ const PadLocal = {
     snsGetTimeline: async (maxId: string): Promise<Object> => {
         return new Promise(async (resolve) => {
             try {
-                const momentList = await client.api.snsGetTimeline(maxId);
-                resolve({ momentList });
+                let momentList = await client.api.snsGetTimeline(maxId);
+                let response = momentList.map((moment) => {
+                    return moment.toObject()
+                })
+                resolve({ response });
+            } catch (e) {
+                resolve(e);
+            }
+        })
+    },
+    snsGetUserTimeline: async (maxId: string, userId: string): Promise<Object> => {
+        return new Promise(async (resolve) => {
+            try {
+                let momentList = await client.api.snsGetUserPage(userId, maxId);
+                let response = momentList.map((moment) => {
+                    return moment.toObject()
+                })
+                resolve({ response });
             } catch (e) {
                 resolve(e);
             }
@@ -475,7 +502,7 @@ const PadLocal = {
         return new Promise(async (resolve) => {
             try {
                 const snsMoment = await client.api.snsGetMoment(momentId);
-                resolve({snsMoment});
+                resolve(snsMoment.toObject());
             } catch (e) {
                 resolve(e);
             }
@@ -539,7 +566,8 @@ const PadLocal = {
                         );
                         break;
                 }
-                resolve({snsMoment});
+                let response = snsMoment.toObject();
+                resolve({ response });
             } catch (e) {
                 resolve(e);
             }
@@ -551,7 +579,6 @@ const PadLocal = {
             const imageData: Buffer = fs.readFileSync(imageFilePathList[i]);
             const des = i === 0 ? description : undefined;
             const imageUploadRes = await client.api.snsUploadImage(imageData, des);
-            console.log(`upload image response: ${stringifyPB(imageUploadRes)}`);
             ret.push(imageUploadRes.getUrl()!);
         }
         return ret;
@@ -580,7 +607,7 @@ const PadLocal = {
                         .setCommentusername(replyCommentUsername);
                 }
                 const snsMoment = await client.api.snsSendComment(id, momentId, momentOwnerUserName, commentText, snsSendCommentReplyTo);
-                resolve({snsMoment});
+                resolve({ snsMoment });
             } catch (e) {
                 resolve(e);
             }
@@ -590,7 +617,7 @@ const PadLocal = {
         return new Promise(async (resolve) => {
             try {
                 const snsMoment = await client.api.snsLikeMoment(momentId, momentOwnerUserName);
-                resolve({snsMoment});
+                resolve({ snsMoment });
             } catch (e) {
                 resolve(e);
             }

@@ -4,10 +4,9 @@ const MessageHandler = {
     post: (message: object) => {
         if (MessageHandler.postUrl) {
             axios.post(MessageHandler.postUrl, message)
-              .then( ()=>{
+              .then(()=>{
                 
-              })
-              .catch( (e:Error)=> {
+              }).catch( (e:Error)=> {
                 console.log(e.message);
               });
         }
