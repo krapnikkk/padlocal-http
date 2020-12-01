@@ -120,39 +120,42 @@
   - [`sns_get_timeline` 获取朋友圈动态列表](#sns_get_timeline-获取朋友圈动态列表)
     - [参数](#参数-36)
     - [响应数据](#响应数据-37)
-  - [`sns_get_moment` 朋友圈动态详情](#sns_get_moment-朋友圈动态详情)
+  - [`sns_get_user_timeline` 获取指定微信的朋友圈动态列表](#sns_get_user_timeline-获取指定微信的朋友圈动态列表)
     - [参数](#参数-37)
     - [响应数据](#响应数据-38)
-  - [`sns_send_text_moment` 发送朋友圈文字动态](#sns_send_text_moment-发送朋友圈文字动态)
+  - [`sns_get_moment` 朋友圈动态详情](#sns_get_moment-朋友圈动态详情)
     - [参数](#参数-38)
     - [响应数据](#响应数据-39)
-  - [`sns_send_image_moment` 发送朋友圈文字动态](#sns_send_image_moment-发送朋友圈文字动态)
+  - [`sns_send_text_moment` 发送朋友圈文字动态](#sns_send_text_moment-发送朋友圈文字动态)
     - [参数](#参数-39)
     - [响应数据](#响应数据-40)
-  - [`sns_send_url_moment` 发送朋友圈链接动态](#sns_send_url_moment-发送朋友圈链接动态)
+  - [`sns_send_image_moment` 发送朋友圈文字动态](#sns_send_image_moment-发送朋友圈文字动态)
     - [参数](#参数-40)
     - [响应数据](#响应数据-41)
-  - [`sns_remove_moment` 移除朋友圈动态](#sns_remove_moment-移除朋友圈动态)
+  - [`sns_send_url_moment` 发送朋友圈链接动态](#sns_send_url_moment-发送朋友圈链接动态)
     - [参数](#参数-41)
     - [响应数据](#响应数据-42)
-  - [`sns_send_comment` 评论朋友圈动态](#sns_send_comment-评论朋友圈动态)
+  - [`sns_remove_moment` 移除朋友圈动态](#sns_remove_moment-移除朋友圈动态)
     - [参数](#参数-42)
     - [响应数据](#响应数据-43)
-  - [`sns_like_moment` 朋友圈动态点赞](#sns_like_moment-朋友圈动态点赞)
+  - [`sns_send_comment` 评论朋友圈动态](#sns_send_comment-评论朋友圈动态)
     - [参数](#参数-43)
     - [响应数据](#响应数据-44)
-  - [`sns_unlike_moment` 朋友圈动态取消点赞](#sns_unlike_moment-朋友圈动态取消点赞)
+  - [`sns_like_moment` 朋友圈动态点赞](#sns_like_moment-朋友圈动态点赞)
     - [参数](#参数-44)
     - [响应数据](#响应数据-45)
-  - [`sns_remove_moment_comment` 朋友圈动态删除评论](#sns_remove_moment_comment-朋友圈动态删除评论)
+  - [`sns_unlike_moment` 朋友圈动态取消点赞](#sns_unlike_moment-朋友圈动态取消点赞)
     - [参数](#参数-45)
     - [响应数据](#响应数据-46)
-  - [`sns_make_moment_private` 朋友圈动态设为私密](#sns_make_moment_private-朋友圈动态设为私密)
+  - [`sns_remove_moment_comment` 朋友圈动态删除评论](#sns_remove_moment_comment-朋友圈动态删除评论)
     - [参数](#参数-46)
     - [响应数据](#响应数据-47)
-  - [`sns_make_moment_public` 朋友圈动态设为公开](#sns_make_moment_public-朋友圈动态设为公开)
+  - [`sns_make_moment_private` 朋友圈动态设为私密](#sns_make_moment_private-朋友圈动态设为私密)
     - [参数](#参数-47)
     - [响应数据](#响应数据-48)
+  - [`sns_make_moment_public` 朋友圈动态设为公开](#sns_make_moment_public-朋友圈动态设为公开)
+    - [参数](#参数-48)
+    - [响应数据](#响应数据-49)
   - [数据结构定义](#数据结构定义)
     - [`messageInfo` 消息Response信息数据结构](#messageinfo-消息response信息数据结构)
     - [`messageRevokeInfo` 消息撤回信息数据结构](#messagerevokeinfo-消息撤回信息数据结构)
@@ -161,7 +164,6 @@
     - [`contactInfo` 联系人信息数据结构](#contactinfo-联系人信息数据结构)
     - [`chatroomInfo` 群聊信息数据结构](#chatroominfo-群聊信息数据结构)
     - [`memberList` 群聊用户列表数据结构](#memberlist-群聊用户列表数据结构)
-    - [`MomentList` 朋友圈动态列表数据结构](#momentlist-朋友圈动态列表数据结构)
     - [`snsMoment` 朋友圈动态详情数据结构](#snsmoment-朋友圈动态详情数据结构)
     - [`replyComment` 朋友圈动态评论数据结构](#replycomment-朋友圈动态评论数据结构)
     - [`SNSMonentOption` 朋友圈动态设置数据结构](#snsmonentoption-朋友圈动态设置数据结构)
@@ -408,7 +410,7 @@
 
 | 字段名 | 数据类型 | 说明 |
 | ----- | ------- | --- |
-| `contact` | object[ [contactInfo](#shareinfo-链接分享数据结构) ]  | 用户信息 |
+| `response` | object[ [`contactInfo` 联系人信息数据结构](#contactinfo-联系人信息数据结构) ]  | 用户信息 |
 
 ## `add_contact` 发起朋友请求
 
@@ -447,7 +449,7 @@
 
 | 字段名 | 数据类型 | 说明 |
 | ----- | ------- | --- |
-| `contact` | object[ [contactInfo](#shareinfo-链接分享数据结构) ]  | 用户信息 |
+| `response` | object[ [`contactInfo` 联系人信息数据结构](#contactinfo-联系人信息数据结构) ]  | 用户信息 |
 
 
 ## `accept_contact` 接收好友请求
@@ -526,7 +528,7 @@
 
 | 字段名 | 数据类型 | 说明 |
 | ----- | ------- | --- |
-| `chatroom` | object[ [contactInfo](#chatroominfo-联系人信息数据结构) ] | 群聊信息 |
+| `response` | object[ [chatroominfo](#chatroominfo-群聊信息数据结构) ] | 群聊信息 |
 
 ## `get_chatroom_members` 获取群聊成员列表
 
@@ -540,7 +542,7 @@
 
 | 字段名 | 数据类型 | 说明 |
 | ----- | ------- | --- |
-| `memberList` | object[[memberList](#memberlist-群聊用户列表数据结构)] | 群聊成员列表 |
+| `response` | object[[memberList](#memberlist-群聊用户列表数据结构)] | 群聊成员列表 |
 
 ## `get_chatroom_member` 获取群聊指定成员信息
 
@@ -555,7 +557,7 @@
 
 | 字段名 | 数据类型 | 说明 |
 | ----- | ------- | --- |
-| `contact` | object[ [contactInfo](#shareinfo-链接分享数据结构) ] | 用户信息 |
+| `response` | object[ [`contactInfo` 联系人信息数据结构](#contactinfo-联系人信息数据结构) ] | 用户信息 |
 
 ## `get_chatroom_qrcode` 获取群聊二维码
 
@@ -705,13 +707,28 @@
 
 | 字段名 | 数据类型 | 默认值 | 说明 |
 | ----- | ------- | ----- | --- |
-| `maxId` | string | - | 微信 ID |
+| `maxId` | string | - | 页码 ID [从0开始] |
 
 ### 响应数据
 
 | 字段名 | 数据类型 | 说明 |
 | ----- | ------- | --- |
-| `momentList` | object[[MomentList](#momentlist-朋友圈动态列表数据结构)] | 朋友圈动态列表 |
+| `response` | [snsMoment](#snsmoment-朋友圈动态详情数据结构)[] | 朋友圈动态列表 |
+
+## `sns_get_user_timeline` 获取指定微信的朋友圈动态列表
+
+### 参数
+
+| 字段名 | 数据类型 | 默认值 | 说明 |
+| ----- | ------- | ----- | --- |
+| `maxId` | string | - | 页码 ID [从0开始] |
+| `userId` | string | - | 微信 ID  |
+
+### 响应数据
+
+| 字段名 | 数据类型 | 说明 |
+| ----- | ------- | --- |
+| `response` | [snsMoment](#snsmoment-朋友圈动态详情数据结构)[] | 朋友圈动态列表 |
 
 ## `sns_get_moment` 朋友圈动态详情
 
@@ -725,7 +742,7 @@
 
 | 字段名 | 数据类型 | 说明 |
 | ----- | ------- | --- |
-| `snsMoment` | object[[snsMoment](#snsmoment-朋友圈动态详情数据结构)] | 朋友圈动态详情 |
+| `response` | object[[snsMoment](#snsmoment-朋友圈动态详情数据结构)] | 朋友圈动态详情 |
 
 ## `sns_send_text_moment` 发送朋友圈文字动态
 
@@ -740,7 +757,7 @@
 
 | 字段名 | 数据类型 | 说明 |
 | ----- | ------- | --- |
-| `snsMoment` | object[[snsMoment](#snsmoment-朋友圈动态详情数据结构)] | 朋友圈动态详情 |
+| `response` | object[[snsMoment](#snsmoment-朋友圈动态详情数据结构)] | 朋友圈动态详情 |
 
 ## `sns_send_image_moment` 发送朋友圈文字动态
 
@@ -755,7 +772,7 @@
 
 | 字段名 | 数据类型 | 说明 |
 | ----- | ------- | --- |
-| `snsMoment` | object[[snsMoment](#snsmoment-朋友圈动态详情数据结构)] | 朋友圈动态详情 |
+| `response` | object[[snsMoment](#snsmoment-朋友圈动态详情数据结构)] | 朋友圈动态详情 |
 
 ## `sns_send_url_moment` 发送朋友圈链接动态
 
@@ -770,7 +787,7 @@
 
 | 字段名 | 数据类型 | 说明 |
 | ----- | ------- | --- |
-| `snsMoment` | object[[snsMoment](#snsmoment-朋友圈动态详情数据结构)] | 朋友圈动态详情 |
+| `response` | object[[snsMoment](#snsmoment-朋友圈动态详情数据结构)] | 朋友圈动态详情 |
 
 ## `sns_remove_moment` 移除朋友圈动态
 
@@ -800,7 +817,7 @@
 
 | 字段名 | 数据类型 | 说明 |
 | ----- | ------- | --- |
-| `snsMoment` | object[[snsMoment](#snsmoment-朋友圈动态详情数据结构)] | 朋友圈动态详情 |
+| `response` | object[[snsMoment](#snsmoment-朋友圈动态详情数据结构)] | 朋友圈动态详情 |
 
 
 ## `sns_like_moment` 朋友圈动态点赞
@@ -816,7 +833,7 @@
 
 | 字段名 | 数据类型 | 说明 |
 | ----- | ------- | --- |
-| `snsMoment` | object[[snsMoment](#snsmoment-朋友圈动态详情数据结构)] | 朋友圈动态详情 |
+| `response` | object[[snsMoment](#snsmoment-朋友圈动态详情数据结构)] | 朋友圈动态详情 |
 
 
 ## `sns_unlike_moment` 朋友圈动态取消点赞
@@ -898,27 +915,60 @@
 
 ### `qrCodeEvent` 微信登录事件数据结构
 
-//todo
+| 字段名 | 数据类型 | 说明 |
+| ----- | ------- | --- |
+| `status` | number  | 登录状态 |
+| `imageurl` | string  | 扫码登录二维码 |
+| `expireat` | number  | 失效时间[单位:s] |
+| `contact` | object[ [`contactInfo` 联系人信息数据结构](#contactinfo-联系人信息数据结构) ]  | 用户信息 |
+
 
 ### `contactInfo` 联系人信息数据结构
 
-//todo
+| 字段名 | 数据类型 | 说明 |
+| ----- | ------- | --- |
+| `username` | string  | 朋友圈动态发布者 ID |
+| `nickname` | string  | 朋友圈动态发布者昵称 |
+| `avatar` | string  | 用户头像地址 |
+| `gender` | number  | 性别 |
+| `signature` | string  | 个性签名 |
+| `alias` | string  | 别名 |
+| `label` | string  | 标签 |
+| `remark` | string  | 备注 |
+| `city` | string  | 城市 |
+| `province` | string  | 省份 |
+| `country` | string  | 城镇 |
+| `contactaddscene` | string  | 联系地址 |
+| `stranger` | boolean  | 是否陌生人 |
+| `chatroomownerusername` | string  | 微信群昵称 |
+| `chatroommaxcount` | number  | 微信群最大人数上限 |
+| `chatroommemberList` | string []  | 微信群用户列表 |
 
 ### `chatroomInfo` 群聊信息数据结构
 
-//todo
+| 字段名 | 数据类型 | 说明 |
+| ----- | ------- | --- |
+| `roomid` | string  | 微信群 ID |
+| `topic` | string  |  微信群名 |
+| `avatar` | string  | 微信群头像 |
 
 ### `memberList` 群聊用户列表数据结构
 
 //todo
 
-### `MomentList` 朋友圈动态列表数据结构
-
-//todo
-
 ### `snsMoment` 朋友圈动态详情数据结构
 
-//todo
+| 字段名 | 数据类型 | 说明 |
+| ----- | ------- | --- |
+| `id` | string  | 朋友圈动态 ID |
+| `username` | string  | 朋友圈动态发布者 ID |
+| `nickname` | string  | 朋友圈动态发布者昵称 |
+| `createtime` | string  | 朋友圈动态发布时间 |
+| `content` | string  | 朋友圈动态内容 |
+| `isrichtext` | boolean  | 是否富文本 |
+| `likeList` | string  | 朋友圈动态点赞用户 ID 数组 |
+| `commentList` | string[]  | 朋友圈动态评论用户 ID 数组 |
+| `withList` | string  | 朋友圈动态@用户 ID 数组 |
 
 ### `replyComment` 朋友圈动态评论数据结构
 
