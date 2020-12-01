@@ -45,8 +45,8 @@
 
 "@types/cors@^2.8.8":
   version "2.8.8"
-  resolved "https://registry.npm.taobao.org/@types/cors/download/@types/cors-2.8.8.tgz?cache=0&sync_timestamp=1605053088545&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2F%40types%2Fcors%2Fdownload%2F%40types%2Fcors-2.8.8.tgz#317a8d8561995c60e35b9e0fcaa8d36660c98092"
-  integrity sha1-MXqNhWGZXGDjW54PyqjTZmDJgJI=
+  resolved "https://registry.npmjs.org/@types/cors/-/cors-2.8.8.tgz#317a8d8561995c60e35b9e0fcaa8d36660c98092"
+  integrity sha512-fO3gf3DxU2Trcbr75O7obVndW/X5k8rJNZkLXlQWStTHhP71PkRqjwPIEI0yMnJdg9R9OasjU+Bsr+Hr1xy/0w==
   dependencies:
     "@types/express" "*"
 
@@ -69,10 +69,20 @@
     "@types/qs" "*"
     "@types/range-parser" "*"
 
-"@types/express@*", "@types/express@^4.17.9":
+"@types/express@*":
   version "4.17.9"
   resolved "https://registry.npm.taobao.org/@types/express/download/@types/express-4.17.9.tgz?cache=0&sync_timestamp=1605057477768&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2F%40types%2Fexpress%2Fdownload%2F%40types%2Fexpress-4.17.9.tgz#f5f2df6add703ff28428add52bdec8a1091b0a78"
   integrity sha1-9fLfat1wP/KEKK3VK97IoQkbCng=
+  dependencies:
+    "@types/body-parser" "*"
+    "@types/express-serve-static-core" "*"
+    "@types/qs" "*"
+    "@types/serve-static" "*"
+
+"@types/express@^4.17.9":
+  version "4.17.9"
+  resolved "https://registry.npmjs.org/@types/express/-/express-4.17.9.tgz#f5f2df6add703ff28428add52bdec8a1091b0a78"
+  integrity sha512-SDzEIZInC4sivGIFY4Sz1GG6J9UObPwCInYJjko2jzOf/Imx/dlpume6Xxwj1ORL82tBbmN4cPDIDkLbWHk9hw==
   dependencies:
     "@types/body-parser" "*"
     "@types/express-serve-static-core" "*"
@@ -542,6 +552,11 @@ end-of-stream@^1.1.0:
   integrity sha1-WuZKX0UFe682JuwU2gyl5LJDHrA=
   dependencies:
     once "^1.4.0"
+
+enum-values@^1.2.1:
+  version "1.2.1"
+  resolved "https://registry.npmjs.org/enum-values/-/enum-values-1.2.1.tgz#c74c7f076fe63c15dee2e4af0f51fd6cd0ce2f62"
+  integrity sha512-Qxe+bcN4g9tnmUitlkQnCpMXTUliW7WntCZ0giei/J4SbSeCiLJzhnFOUZKwnIOT4LiNo2iVfrrjDTZW+JAJhA==
 
 escape-goat@^2.0.0:
   version "2.1.1"
@@ -1133,8 +1148,8 @@ node-forge@^0.10.0:
 
 nodemon@^2.0.6:
   version "2.0.6"
-  resolved "https://registry.npm.taobao.org/nodemon/download/nodemon-2.0.6.tgz#1abe1937b463aaf62f0d52e2b7eaadf28cc2240d"
-  integrity sha1-Gr4ZN7RjqvYvDVLit+qt8ozCJA0=
+  resolved "https://registry.npmjs.org/nodemon/-/nodemon-2.0.6.tgz#1abe1937b463aaf62f0d52e2b7eaadf28cc2240d"
+  integrity sha512-4I3YDSKXg6ltYpcnZeHompqac4E6JeAMpGm8tJnB9Y3T0ehasLa4139dJOcCrB93HHrUMsCrKtoAlXTqT5n4AQ==
   dependencies:
     chokidar "^3.2.2"
     debug "^3.2.6"
@@ -1198,10 +1213,10 @@ package-json@^6.3.0:
     registry-url "^5.0.0"
     semver "^6.2.0"
 
-padlocal-client-ts@^0.1.26:
-  version "0.1.26"
-  resolved "https://registry.npm.taobao.org/padlocal-client-ts/download/padlocal-client-ts-0.1.26.tgz#e0efd8d93766d33ea191574a9e244155d12d5663"
-  integrity sha1-4O/Y2Tdm0z6hkVdKniRBVdEtVmM=
+padlocal-client-ts@0.2.0:
+  version "0.2.0"
+  resolved "https://registry.npmjs.org/padlocal-client-ts/-/padlocal-client-ts-0.2.0.tgz#169287d9b809868ec813c6f0a2741c8de9625cf7"
+  integrity sha512-HM9SqlJAlcdpgctbKgY3Vn5WlwxtDSJDu3KTICn6VS8mp94LJa49Debx58mpd2TxUEhgg/lCrDXvPuPErT5MBw==
   dependencies:
     "@grpc/grpc-js" "^1.1.3"
     "@types/crypto-js" "^3.1.47"
@@ -1210,6 +1225,7 @@ padlocal-client-ts@^0.1.26:
     "@types/uuid" "^8.0.1"
     axios "^0.19.2"
     crypto-random-string "^3.2.0"
+    enum-values "^1.2.1"
     google-protobuf "^3.12.4"
     uuid "^8.3.0"
     verror "^1.10.0"
