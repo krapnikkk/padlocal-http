@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.install = void 0;
+exports.login = exports.install = void 0;
 const express_1 = __importDefault(require("express"));
 const interface_1 = require("./interface");
 const cors_1 = __importDefault(require("cors"));
@@ -27,9 +27,8 @@ app.use(express_1.default.json());
 app.use(cors_1.default({
     methods: ['GET', 'POST', 'OPTIONS']
 }));
-app.use((_req, _res, next) => {
-    const error = new HttpException_1.default(http_status_codes_1.StatusCodes.NOT_FOUND, "Router Not Found");
-    next(error);
+process.on('unhandledRejection', (error) => {
+    console.log('unhandledRejection', error.message);
 });
 app.use(checkLoginMiddleware_1.default);
 app.use(errorMiddleware_1.default);
@@ -50,6 +49,22 @@ app.post("/api/logout", (_req, res) => __awaiter(void 0, void 0, void 0, functio
 app.post("/api/send_private_msg", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     let { id, message } = req.body;
     let result = yield PadLocal_1.default.sendMessage({ message, id });
+    res.json({
+        result: result,
+        success: true
+    });
+}));
+app.post("/api/send_chatroom_msg", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    let { id, message, atUserList } = req.body;
+    let result = yield PadLocal_1.default.sendMessage({ message, id }, atUserList);
+    res.json({
+        result: result,
+        success: true
+    });
+}));
+app.post("/api/revoke_message", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    let { id, msgId, revokeInfo } = req.body;
+    let result = yield PadLocal_1.default.revokeMessage(msgId, id, revokeInfo);
     res.json({
         result: result,
         success: true
@@ -88,16 +103,16 @@ app.post("/api/send_voice", (req, res) => __awaiter(void 0, void 0, void 0, func
     });
 }));
 app.post("/api/send_share_link", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    let { id, title, desc, url, thumburl } = req.body;
-    let result = yield PadLocal_1.default.sendAppMessageLink(id, { title, desc, url, thumburl });
+    let { id, shareInfo } = req.body;
+    let result = yield PadLocal_1.default.sendAppMessageLink(id, shareInfo);
     res.json({
         result: result,
         success: true
     });
 }));
 app.post("/api/send_share_miniprogram", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    let { id, title, desc, url, mpThumbFilePath, mpappusername, mpappname, mpappid, appiconurl, mpapppath } = req.body;
-    let result = yield PadLocal_1.default.sendAppMessageMiniProgram(id, { title, desc, url, mpThumbFilePath, mpappusername, mpappname, mpappid, appiconurl, mpapppath });
+    let { id, info } = req.body;
+    let result = yield PadLocal_1.default.sendAppMessageMiniProgram(id, info);
     res.json({
         result: result,
         success: true
@@ -106,6 +121,14 @@ app.post("/api/send_share_miniprogram", (req, res) => __awaiter(void 0, void 0, 
 app.post("/api/send_contact_card", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     let { id, payload } = req.body;
     let result = yield PadLocal_1.default.sendContactCardMessage(id, payload);
+    res.json({
+        result: result,
+        success: true
+    });
+}));
+app.post("/api/search_contact", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    let { userName } = req.body;
+    let result = yield PadLocal_1.default.searchContact(userName);
     res.json({
         result: result,
         success: true
@@ -135,17 +158,16 @@ app.post("/api/get_contact", (req, res) => __awaiter(void 0, void 0, void 0, fun
         success: true
     });
 }));
-app.post("/api/get_contact_qrcode", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    let { userName } = req.body;
-    let result = yield PadLocal_1.default.getContactQRCode(userName);
+app.post("/api/get_contact_qrcode", (_req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    let result = yield PadLocal_1.default.getContactQRCode();
     res.json({
         result: result,
         success: true
     });
 }));
-app.post("/api/search_contact", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    let { userName } = req.body;
-    let result = yield PadLocal_1.default.searchContact(userName);
+app.post("/api/accept_contact", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    let { stranger, ticket } = req.body;
+    let result = yield PadLocal_1.default.acceptUser(stranger, ticket);
     res.json({
         result: result,
         success: true
@@ -185,7 +207,6 @@ app.post("/api/update_contact_remark", (req, res) => __awaiter(void 0, void 0, v
 }));
 app.post("/api/create_chatroom", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     let { userNameList } = req.body;
-    console.log(Object.prototype.toString.call(userNameList));
     let result = yield PadLocal_1.default.createChatRoom(userNameList);
     res.json({
         result: result,
@@ -240,6 +261,30 @@ app.post("/api/quit_chatroom", (req, res) => __awaiter(void 0, void 0, void 0, f
         success: true
     });
 }));
+app.post("/api/add_chatroom_member", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    let { roomId, userName } = req.body;
+    let result = yield PadLocal_1.default.addChatRoomMember(roomId, userName);
+    res.json({
+        result: result,
+        success: true
+    });
+}));
+app.post("/api/delete_chatroom_member", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    let { roomId, userName } = req.body;
+    let result = yield PadLocal_1.default.deleteChatRoomMember(roomId, userName);
+    res.json({
+        result: result,
+        success: true
+    });
+}));
+app.post("/api/invite_chatroom_member", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    let { roomId, userName } = req.body;
+    let result = yield PadLocal_1.default.inviteChatRoomMember(roomId, userName);
+    res.json({
+        result: result,
+        success: true
+    });
+}));
 app.post("/api/get_labelList", (_req, res) => __awaiter(void 0, void 0, void 0, function* () {
     let result = yield PadLocal_1.default.getLabelList();
     res.json({
@@ -271,33 +316,17 @@ app.post("/api/set_contact_label", (req, res) => __awaiter(void 0, void 0, void 
         success: true
     });
 }));
-app.post("/api/add_chatroom_member", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    let { roomId, userName } = req.body;
-    let result = yield PadLocal_1.default.addChatRoomMember(roomId, userName);
-    res.json({
-        result: result,
-        success: true
-    });
-}));
-app.post("/api/delete_chatroom_member", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    let { roomId, userName } = req.body;
-    let result = yield PadLocal_1.default.deleteChatRoomMember(roomId, userName);
-    res.json({
-        result: result,
-        success: true
-    });
-}));
-app.post("/api/invite_chatroom_member", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    let { roomId, userName } = req.body;
-    let result = yield PadLocal_1.default.inviteChatRoomMember(roomId, userName);
-    res.json({
-        result: result,
-        success: true
-    });
-}));
 app.post("/api/sns_get_timeline", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     let { maxId } = req.body;
     let result = yield PadLocal_1.default.snsGetTimeline(maxId);
+    res.json({
+        result: result,
+        success: true
+    });
+}));
+app.post("/api/sns_get_user_timeline", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    let { maxId, userId } = req.body;
+    let result = yield PadLocal_1.default.snsGetUserTimeline(maxId, userId);
     res.json({
         result: result,
         success: true
@@ -311,9 +340,25 @@ app.post("/api/sns_get_moment", (req, res) => __awaiter(void 0, void 0, void 0, 
         success: true
     });
 }));
-app.post("/api/sns_send_moment", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    let { content, type, options } = req.body;
-    let result = yield PadLocal_1.default.snsSendMoment(type, content, options);
+app.post("/api/sns_send_text_moment", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    let { content, options } = req.body;
+    let result = yield PadLocal_1.default.snsSendMoment(interface_1.SNSMomentType.Text, content, options);
+    res.json({
+        result: result,
+        success: true
+    });
+}));
+app.post("/api/sns_send_image_moment", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    let { content, options } = req.body;
+    let result = yield PadLocal_1.default.snsSendMoment(interface_1.SNSMomentType.Image, content, options);
+    res.json({
+        result: result,
+        success: true
+    });
+}));
+app.post("/api/sns_send_url_moment", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    let { content, options } = req.body;
+    let result = yield PadLocal_1.default.snsSendMoment(interface_1.SNSMomentType.Url, content, options);
     res.json({
         result: result,
         success: true
@@ -361,7 +406,7 @@ app.post("/api/sns_remove_moment_comment", (req, res) => __awaiter(void 0, void 
 }));
 app.post("/api/sns_make_moment_private", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     let { momentId } = req.body;
-    let result = yield PadLocal_1.default.snsUnlikeMoment(momentId);
+    let result = yield PadLocal_1.default.snsMakeMomentPrivate(momentId);
     res.json({
         result: result,
         success: true
@@ -369,18 +414,26 @@ app.post("/api/sns_make_moment_private", (req, res) => __awaiter(void 0, void 0,
 }));
 app.post("/api/sns_make_moment_public", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     let { momentId } = req.body;
-    let result = yield PadLocal_1.default.snsUnlikeMoment(momentId);
+    let result = yield PadLocal_1.default.snsMakeMomentPublic(momentId);
     res.json({
         result: result,
         success: true
     });
 }));
+app.use((_req, _res, next) => {
+    const error = new HttpException_1.default(http_status_codes_1.StatusCodes.NOT_FOUND, "Router Not Found");
+    next(error);
+});
 exports.install = (robotConfig, serverConfig) => {
     let { postUrl, port } = serverConfig;
     PadLocal_1.default.install(robotConfig);
     MessageHandler_1.default.postUrl = postUrl;
     app.listen(port, () => __awaiter(void 0, void 0, void 0, function* () {
-        console.log('running on http://127.0.0.1:' + serverConfig.port);
+        console.log('Padlocal-http listen on http://127.0.0.1:' + serverConfig.port);
+        console.log(`Post url :${postUrl}`);
     }));
+};
+exports.login = () => {
+    PadLocal_1.default.login();
 };
 //# sourceMappingURL=PadLocalHTTP.js.map

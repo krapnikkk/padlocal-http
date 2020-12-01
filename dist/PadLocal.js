@@ -34,15 +34,15 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const padlocal_client_ts_1 = require("padlocal-client-ts");
 const padlocal_pb_1 = require("padlocal-client-ts/dist/proto/padlocal_pb");
 const Utils_1 = require("padlocal-client-ts/dist/utils/Utils");
+const pb = __importStar(require("padlocal-client-ts/dist/proto/padlocal_pb"));
 const interface_1 = require("./interface");
 const fs_1 = __importDefault(require("fs"));
 const music_metadata_1 = require("music-metadata");
-const pb = __importStar(require("padlocal-client-ts/dist/proto/padlocal_pb"));
 const utils_1 = require("./utils");
+const MessageHandler_1 = __importDefault(require("./MessageHandler"));
 let client;
 const PadLocal = {
     isLogin: false,
-    messageHandler: null,
     install: (config) => {
         try {
             let { serverHost, serverPort, token, serverCAFilePath } = config;
@@ -54,50 +54,39 @@ const PadLocal = {
     },
     login: () => __awaiter(void 0, void 0, void 0, function* () {
         return new Promise((resolve, reject) => __awaiter(void 0, void 0, void 0, function* () {
+            if (!client) {
+                resolve("install first");
+            }
             yield client.api.login(padlocal_pb_1.LoginPolicy.DEFAULT, {
                 onLoginStart: (loginType) => {
                     console.log("start login with type: ", loginType);
                 },
-                onOneClickEvent: (oneClickEvent) => {
-                    const oneClickEventObject = oneClickEvent.toObject();
-                    console.log("on one click event: ", JSON.stringify(oneClickEventObject));
-                    if (oneClickEventObject.status == 1) {
-                        resolve(JSON.stringify(oneClickEventObject));
+                onOneClickEvent: (qrCodeEvent) => {
+                    let response = qrCodeEvent.toObject();
+                    console.log("on one click event: ", JSON.stringify(response));
+                    if (response.status == 1) {
+                        resolve({ response });
                     }
                 },
                 onQrCodeEvent: (qrCodeEvent) => {
+                    let response = qrCodeEvent.toObject();
                     console.log("on qr code event: ", JSON.stringify(qrCodeEvent.toObject()));
-                    resolve("on qr code event: " + JSON.stringify(qrCodeEvent.toObject()));
+                    resolve({ response });
                 },
                 onLoginSuccess(contact) {
+                    client.on("message", (messageList) => {
+                        for (const message of messageList) {
+                            MessageHandler_1.default.post(message.toObject());
+                        }
+                    });
                     PadLocal.isLogin = true;
-                    console.log("on login success: ", JSON.stringify(contact.toObject()));
-                    resolve("on login success: " + JSON.stringify(contact.toObject()));
+                    let response = contact.toObject();
+                    resolve({ response });
                 },
                 onSync: (_syncEvent) => {
-                    for (const contact of _syncEvent.getContactList()) {
-                        console.log("login on sync contact: ", JSON.stringify(contact.toObject()));
-                    }
-                    for (const message of _syncEvent.getMessageList()) {
-                        console.log("login on sync message: ", JSON.stringify(message.toObject()));
-                    }
                 }
             }).catch(e => {
                 reject(e);
-            });
-            client.on("message", (messageList) => {
-                for (const message of messageList) {
-                    console.log("on message: ", JSON.stringify(message.toObject()));
-                    if (message.getType() == 1) {
-                    }
-                    else if (message.getType() == 51) {
-                    }
-                }
-            });
-            client.on("contact", (contactList) => {
-                for (const contact of contactList) {
-                    console.log("on contact: ", JSON.stringify(contact.toObject()));
-                }
             });
             client.on("error", (e) => {
                 console.log("error:", e);
@@ -107,19 +96,34 @@ const PadLocal = {
     logout: () => __awaiter(void 0, void 0, void 0, function* () {
         return new Promise((resolve) => __awaiter(void 0, void 0, void 0, function* () {
             if (client) {
-                const response = yield client.api.logout();
+                const logoutResponse = yield client.api.logout();
                 PadLocal.isLogin = false;
-                resolve(response);
+                let response = logoutResponse.toObject();
+                resolve({ response });
             }
         }));
     }),
-    sendMessage: (msg) => __awaiter(void 0, void 0, void 0, function* () {
+    sendMessage: (msg, atUserList = []) => __awaiter(void 0, void 0, void 0, function* () {
         return new Promise((resolve) => __awaiter(void 0, void 0, void 0, function* () {
             try {
                 let { id, message } = msg;
                 let idempotentId = Utils_1.genIdempotentId();
-                const response = yield client.api.sendTextMessage(idempotentId, id, message);
-                resolve(response.toObject());
+                let sendTextMessageResponse = yield client.api.sendTextMessage(idempotentId, id, message, atUserList);
+                let response = sendTextMessageResponse.toObject();
+                resolve({ response });
+            }
+            catch (e) {
+                resolve(e);
+            }
+        }));
+    }),
+    revokeMessage: (msgId, toUserName, revokeInfo) => __awaiter(void 0, void 0, void 0, function* () {
+        return new Promise((resolve) => __awaiter(void 0, void 0, void 0, function* () {
+            try {
+                let { clientMsgId, newClientMsgId, createTime } = revokeInfo;
+                const fromUserName = yield client.selfContact.getUsername();
+                yield client.api.revokeMessage(msgId, fromUserName, toUserName, new padlocal_pb_1.MessageRevokeInfo().setClientmsgid(clientMsgId).setNewclientmsgid(newClientMsgId).setCreatetime(createTime));
+                resolve({ "msg": "done" });
             }
             catch (e) {
                 resolve(e);
@@ -130,26 +134,27 @@ const PadLocal = {
         return new Promise((resolve) => __awaiter(void 0, void 0, void 0, function* () {
             try {
                 const fileData = fs_1.default.readFileSync(file);
-                let response;
+                let sendVideoMessageResponse;
                 switch (type) {
                     case interface_1.Media.Video:
-                        response = yield client.api.sendVideoMessage(Utils_1.genIdempotentId(), id, fileData);
+                        sendVideoMessageResponse = yield client.api.sendVideoMessage(Utils_1.genIdempotentId(), id, fileData);
                         break;
                     case interface_1.Media.Image:
-                        response = yield client.api.sendImageMessage(Utils_1.genIdempotentId(), id, fileData);
+                        sendVideoMessageResponse = yield client.api.sendImageMessage(Utils_1.genIdempotentId(), id, fileData);
                         break;
                     case interface_1.Media.Audio:
                         const audioMetadata = yield music_metadata_1.parseBuffer(fileData);
                         const duration = audioMetadata.format.duration;
                         const milliSeconds = utils_1.secondsToMilliSeconds(duration);
-                        response = yield client.api.sendVoiceMessage(Utils_1.genIdempotentId(), id, fileData, milliSeconds);
+                        sendVideoMessageResponse = yield client.api.sendVoiceMessage(Utils_1.genIdempotentId(), id, fileData, milliSeconds);
                         break;
                     default:
                         const fileName = file.split("/").pop();
-                        response = yield client.api.sendFileMessage(Utils_1.genIdempotentId(), id, fileData, fileName);
+                        sendVideoMessageResponse = yield client.api.sendFileMessage(Utils_1.genIdempotentId(), id, fileData, fileName);
                         break;
                 }
-                resolve(response.toObject());
+                let response = sendVideoMessageResponse.toObject();
+                resolve({ response });
             }
             catch (e) {
                 resolve(e);
@@ -160,12 +165,12 @@ const PadLocal = {
         return new Promise((resolve) => __awaiter(void 0, void 0, void 0, function* () {
             try {
                 const { title, desc, url, thumburl } = info;
-                const response = yield client.api.sendAppMessageLink(Utils_1.genIdempotentId(), id, new pb.AppMessageLink()
+                const msgId = yield client.api.sendAppMessageLink(Utils_1.genIdempotentId(), id, new pb.AppMessageLink()
                     .setTitle(title)
                     .setDescription(desc)
                     .setUrl(url)
                     .setThumburl(thumburl));
-                resolve({ "msgId": response });
+                resolve({ msgId });
             }
             catch (e) {
                 resolve(e);
@@ -177,7 +182,7 @@ const PadLocal = {
             try {
                 const { title, desc, url, mpThumbFilePath, mpappusername, mpappname, mpappid, appiconurl } = info;
                 const thumbImageData = fs_1.default.readFileSync(mpThumbFilePath);
-                const response = yield client.api.sendAppMessageMiniProgram(Utils_1.genIdempotentId(), id, new pb.AppMessageMiniProgram()
+                const msgId = yield client.api.sendAppMessageMiniProgram(Utils_1.genIdempotentId(), id, new pb.AppMessageMiniProgram()
                     .setTitle(title)
                     .setDescription(desc)
                     .setUrl(url)
@@ -187,7 +192,7 @@ const PadLocal = {
                     .setMpappiconurl(appiconurl)
                     .setMpapppath("pages/home/index.html?utm_medium=userid_123456")
                     .setThumbimage(thumbImageData));
-                resolve({ "msgId": response });
+                resolve({ msgId });
             }
             catch (e) {
                 resolve(e);
@@ -199,8 +204,9 @@ const PadLocal = {
             try {
                 const searchRes = yield client.api.searchContact(userName);
                 const contact = searchRes.getContact();
-                const response = yield client.api.sendContactCardMessage(Utils_1.genIdempotentId(), id, contact);
-                resolve(response);
+                const sendContactCardMessageResponse = yield client.api.sendContactCardMessage(Utils_1.genIdempotentId(), id, contact);
+                let response = sendContactCardMessageResponse.toObject();
+                resolve({ response });
             }
             catch (e) {
                 resolve(e);
@@ -210,11 +216,9 @@ const PadLocal = {
     addContact: (userName, greeting) => __awaiter(void 0, void 0, void 0, function* () {
         return new Promise((resolve) => __awaiter(void 0, void 0, void 0, function* () {
             try {
-                const searchRes = yield client.api.searchContact(userName);
-                const contact = Utils_1.stringifyPB(searchRes);
-                console.log(`search contact: ${contact}`);
-                yield client.api.addContact(searchRes.getContact().getUsername(), searchRes.getAntispamticket(), pb.AddContactScene.WECHAT_ID, greeting);
-                resolve(contact);
+                const response = yield client.api.searchContact(userName);
+                yield client.api.addContact(response.getContact().getUsername(), response.getAntispamticket(), pb.AddContactScene.WECHAT_ID, greeting);
+                resolve({ "msg": "done" });
             }
             catch (e) {
                 resolve(e);
@@ -225,7 +229,7 @@ const PadLocal = {
         return new Promise((resolve) => __awaiter(void 0, void 0, void 0, function* () {
             try {
                 yield client.api.deleteContact(userName);
-                resolve("done");
+                resolve({ "msg": "done" });
             }
             catch (e) {
                 resolve(e);
@@ -236,21 +240,32 @@ const PadLocal = {
         return new Promise((resolve) => __awaiter(void 0, void 0, void 0, function* () {
             try {
                 const contact = yield client.api.getContact(userName);
-                resolve(contact);
+                let response = contact.toObject();
+                resolve({ response });
             }
             catch (e) {
                 resolve(e);
             }
         }));
     }),
-    getContactQRCode: (userName) => __awaiter(void 0, void 0, void 0, function* () {
+    getContactQRCode: () => __awaiter(void 0, void 0, void 0, function* () {
         return new Promise((resolve) => __awaiter(void 0, void 0, void 0, function* () {
             try {
-                const contact = yield client.api.getContact(userName);
-                const contactName = contact.getUsername();
+                const contactName = yield client.selfContact.getUsername();
                 const response = yield client.api.getContactQRCode(contactName, 2);
                 const qrcode = "data:image/png;base64," + response.getQrcode_asB64();
-                resolve(qrcode);
+                resolve({ qrcode });
+            }
+            catch (e) {
+                resolve(e);
+            }
+        }));
+    }),
+    acceptUser: (stranger, ticket) => __awaiter(void 0, void 0, void 0, function* () {
+        return new Promise((resolve) => __awaiter(void 0, void 0, void 0, function* () {
+            try {
+                yield client.api.acceptUser(stranger, ticket);
+                resolve({ "msg": "done" });
             }
             catch (e) {
                 resolve(e);
@@ -261,7 +276,8 @@ const PadLocal = {
         return new Promise((resolve) => __awaiter(void 0, void 0, void 0, function* () {
             try {
                 const contact = yield client.api.searchContact(userName);
-                resolve(contact);
+                let response = contact.toObject();
+                resolve({ response });
             }
             catch (e) {
                 resolve(e);
@@ -272,7 +288,7 @@ const PadLocal = {
         return new Promise((resolve) => __awaiter(void 0, void 0, void 0, function* () {
             try {
                 yield client.api.updateSelfNickName(nickname);
-                resolve("done");
+                resolve({ "msg": "done" });
             }
             catch (e) {
                 resolve(e);
@@ -283,7 +299,7 @@ const PadLocal = {
         return new Promise((resolve) => __awaiter(void 0, void 0, void 0, function* () {
             try {
                 yield client.api.updateSelfSignature(signature);
-                resolve("done");
+                resolve({ "msg": "done" });
             }
             catch (e) {
                 resolve(e);
@@ -294,7 +310,7 @@ const PadLocal = {
         return new Promise((resolve) => __awaiter(void 0, void 0, void 0, function* () {
             try {
                 const status = yield client.api.zombieTest(userName);
-                resolve(status);
+                resolve({ status });
             }
             catch (e) {
                 resolve(e);
@@ -305,7 +321,7 @@ const PadLocal = {
         return new Promise((resolve) => __awaiter(void 0, void 0, void 0, function* () {
             try {
                 yield client.api.updateContactRemark(userName, remark);
-                resolve("done");
+                resolve({ "msg": "done" });
             }
             catch (e) {
                 resolve(e);
@@ -316,8 +332,9 @@ const PadLocal = {
         return new Promise((resolve) => __awaiter(void 0, void 0, void 0, function* () {
             try {
                 const id = Utils_1.genIdempotentId();
-                const response = yield client.api.createChatRoom(id, userNameList);
-                resolve(response);
+                const chatroom = yield client.api.createChatRoom(id, userNameList);
+                let response = chatroom.toObject();
+                resolve({ response });
             }
             catch (e) {
                 resolve(e);
@@ -328,8 +345,10 @@ const PadLocal = {
         return new Promise((resolve) => __awaiter(void 0, void 0, void 0, function* () {
             try {
                 const memberList = yield client.api.getChatRoomMembers(roomId);
-                const response = Utils_1.stringifyPB(memberList);
-                resolve(response);
+                let response = memberList.map((menber) => {
+                    return menber.toObject();
+                });
+                resolve({ response });
             }
             catch (e) {
                 resolve(e);
@@ -341,7 +360,7 @@ const PadLocal = {
             try {
                 const response = yield client.api.getChatRoomQrCode(roomId);
                 const qrcode = "data:image/png;base64," + response.getQrcode_asB64();
-                resolve(qrcode);
+                resolve({ qrcode });
             }
             catch (e) {
                 resolve(e);
@@ -351,9 +370,9 @@ const PadLocal = {
     getChatRoomMember: (roomId, userName) => __awaiter(void 0, void 0, void 0, function* () {
         return new Promise((resolve) => __awaiter(void 0, void 0, void 0, function* () {
             try {
-                const member = yield client.api.getChatRoomMember(roomId, userName);
-                const response = Utils_1.stringifyPB(member);
-                resolve(response);
+                const contact = yield client.api.getChatRoomMember(roomId, userName);
+                let response = contact.toObject();
+                resolve({ response });
             }
             catch (e) {
                 resolve(e);
@@ -364,7 +383,7 @@ const PadLocal = {
         return new Promise((resolve) => __awaiter(void 0, void 0, void 0, function* () {
             try {
                 yield client.api.setChatRoomAnnouncement(roomId, announcement);
-                resolve("done");
+                resolve({ "msg": "done" });
             }
             catch (e) {
                 resolve(e);
@@ -375,7 +394,7 @@ const PadLocal = {
         return new Promise((resolve) => __awaiter(void 0, void 0, void 0, function* () {
             try {
                 yield client.api.setChatRoomName(roomId, roomName);
-                resolve("done");
+                resolve({ "msg": "done" });
             }
             catch (e) {
                 resolve(e);
@@ -386,7 +405,7 @@ const PadLocal = {
         return new Promise((resolve) => __awaiter(void 0, void 0, void 0, function* () {
             try {
                 yield client.api.addChatRoomMember(roomId, userName);
-                resolve("done");
+                resolve({ "msg": "done" });
             }
             catch (e) {
                 resolve(e);
@@ -397,7 +416,7 @@ const PadLocal = {
         return new Promise((resolve) => __awaiter(void 0, void 0, void 0, function* () {
             try {
                 yield client.api.deleteChatRoomMember(roomId, userName);
-                resolve("done");
+                resolve({ "msg": "done" });
             }
             catch (e) {
                 resolve(e);
@@ -408,7 +427,7 @@ const PadLocal = {
         return new Promise((resolve) => __awaiter(void 0, void 0, void 0, function* () {
             try {
                 yield client.api.inviteChatRoomMember(roomId, userName);
-                resolve("done");
+                resolve({ "msg": "done" });
             }
             catch (e) {
                 resolve(e);
@@ -419,7 +438,7 @@ const PadLocal = {
         return new Promise((resolve) => __awaiter(void 0, void 0, void 0, function* () {
             try {
                 yield client.api.quitChatRoom(roomId);
-                resolve("done");
+                resolve({ "msg": "done" });
             }
             catch (e) {
                 resolve(e);
@@ -429,8 +448,8 @@ const PadLocal = {
     getLabelList: () => __awaiter(void 0, void 0, void 0, function* () {
         return new Promise((resolve) => __awaiter(void 0, void 0, void 0, function* () {
             try {
-                const response = yield client.api.getLabelList();
-                resolve(response);
+                const labelList = yield client.api.getLabelList();
+                resolve({ labelList });
             }
             catch (e) {
                 resolve(e);
@@ -452,7 +471,7 @@ const PadLocal = {
         return new Promise((resolve) => __awaiter(void 0, void 0, void 0, function* () {
             try {
                 yield client.api.removeLabel(labelId);
-                resolve("done");
+                resolve({ "msg": "done" });
             }
             catch (e) {
                 resolve(e);
@@ -463,7 +482,7 @@ const PadLocal = {
         return new Promise((resolve) => __awaiter(void 0, void 0, void 0, function* () {
             try {
                 yield client.api.setContactLabel(userName, labelList);
-                resolve("done");
+                resolve({ "msg": "done" });
             }
             catch (e) {
                 resolve(e);
@@ -473,9 +492,25 @@ const PadLocal = {
     snsGetTimeline: (maxId) => __awaiter(void 0, void 0, void 0, function* () {
         return new Promise((resolve) => __awaiter(void 0, void 0, void 0, function* () {
             try {
-                const momentList = yield client.api.snsGetTimeline(maxId);
-                const response = Utils_1.stringifyPB(momentList);
-                resolve(response);
+                let momentList = yield client.api.snsGetTimeline(maxId);
+                let response = momentList.map((moment) => {
+                    return moment.toObject();
+                });
+                resolve({ response });
+            }
+            catch (e) {
+                resolve(e);
+            }
+        }));
+    }),
+    snsGetUserTimeline: (maxId, userId) => __awaiter(void 0, void 0, void 0, function* () {
+        return new Promise((resolve) => __awaiter(void 0, void 0, void 0, function* () {
+            try {
+                let momentList = yield client.api.snsGetUserPage(userId, maxId);
+                let response = momentList.map((moment) => {
+                    return moment.toObject();
+                });
+                resolve({ response });
             }
             catch (e) {
                 resolve(e);
@@ -485,9 +520,8 @@ const PadLocal = {
     snsGetMoment: (momentId) => __awaiter(void 0, void 0, void 0, function* () {
         return new Promise((resolve) => __awaiter(void 0, void 0, void 0, function* () {
             try {
-                const moment = yield client.api.snsGetMoment(momentId);
-                const response = Utils_1.stringifyPB(moment);
-                resolve(response);
+                const snsMoment = yield client.api.snsGetMoment(momentId);
+                resolve(snsMoment.toObject());
             }
             catch (e) {
                 resolve(e);
@@ -497,7 +531,7 @@ const PadLocal = {
     snsSendMoment: (type, content, options) => __awaiter(void 0, void 0, void 0, function* () {
         return new Promise((resolve) => __awaiter(void 0, void 0, void 0, function* () {
             try {
-                let response, moment;
+                let snsMoment;
                 const id = Utils_1.genIdempotentId();
                 const { isPrivate, cannotseeusernameList, canseeusernameList, atusernameList } = options;
                 const snsSendMomentOptions = new pb.SnsSendMomentOptions();
@@ -516,28 +550,28 @@ const PadLocal = {
                 switch (type) {
                     case interface_1.SNSMomentType.Text:
                         const textMoment = new pb.SnsSendMomentText().setText(content);
-                        moment = yield client.api.snsSendMoment(id, textMoment, snsSendMomentOptions);
+                        snsMoment = yield client.api.snsSendMoment(id, textMoment, snsSendMomentOptions);
                         break;
                     case interface_1.SNSMomentType.Image:
                         let { imageFilePathList, description } = content;
                         const imageMoment = new pb.SnsSendMomentImages().setText(description);
                         const imageUrlList = yield PadLocal.uploadImages(imageFilePathList);
                         imageMoment.setImageurlList(imageUrlList);
-                        moment = yield client.api.snsSendMoment(id, imageMoment, snsSendMomentOptions);
+                        snsMoment = yield client.api.snsSendMoment(id, imageMoment, snsSendMomentOptions);
                         break;
                     case interface_1.SNSMomentType.Url:
                         let { url, title, thumburl, desc } = content;
                         const urlMoment = new pb.SnsSendMomentUrl().setText(desc);
                         const coverImageUrlList = yield PadLocal.uploadImages([thumburl]);
                         urlMoment.setImageurl(coverImageUrlList[0]).setUrl(url).setUrltitle(title);
-                        moment = yield client.api.snsSendMoment(id, urlMoment, snsSendMomentOptions);
+                        snsMoment = yield client.api.snsSendMoment(id, urlMoment, snsSendMomentOptions);
                         break;
                     default:
-                        moment = yield client.api.snsSendMoment(id, new pb.SnsSendMomentText().setText(content), snsSendMomentOptions);
+                        snsMoment = yield client.api.snsSendMoment(id, new pb.SnsSendMomentText().setText(content), snsSendMomentOptions);
                         break;
                 }
-                response = Utils_1.stringifyPB(moment);
-                resolve(response);
+                let response = snsMoment.toObject();
+                resolve({ response });
             }
             catch (e) {
                 resolve(e);
@@ -550,7 +584,6 @@ const PadLocal = {
             const imageData = fs_1.default.readFileSync(imageFilePathList[i]);
             const des = i === 0 ? description : undefined;
             const imageUploadRes = yield client.api.snsUploadImage(imageData, des);
-            console.log(`upload image response: ${Utils_1.stringifyPB(imageUploadRes)}`);
             ret.push(imageUploadRes.getUrl());
         }
         return ret;
@@ -559,7 +592,7 @@ const PadLocal = {
         return new Promise((resolve) => __awaiter(void 0, void 0, void 0, function* () {
             try {
                 yield client.api.snsRemoveMoment(momentId);
-                resolve("done");
+                resolve({ "msg": "done" });
             }
             catch (e) {
                 resolve(e);
@@ -577,11 +610,10 @@ const PadLocal = {
                         .setCommentnickname(replyCommentNickName)
                         .setCommentusername(replyCommentUsername);
                 }
-                const response = yield client.api.snsSendComment(id, momentId, momentOwnerUserName, commentText, snsSendCommentReplyTo);
-                resolve(response);
+                const snsMoment = yield client.api.snsSendComment(id, momentId, momentOwnerUserName, commentText, snsSendCommentReplyTo);
+                resolve({ snsMoment });
             }
             catch (e) {
-                console.log(e);
                 resolve(e);
             }
         }));
@@ -590,8 +622,7 @@ const PadLocal = {
         return new Promise((resolve) => __awaiter(void 0, void 0, void 0, function* () {
             try {
                 const snsMoment = yield client.api.snsLikeMoment(momentId, momentOwnerUserName);
-                const response = Utils_1.stringifyPB(snsMoment);
-                resolve(response);
+                resolve({ snsMoment });
             }
             catch (e) {
                 resolve(e);
@@ -602,7 +633,7 @@ const PadLocal = {
         return new Promise((resolve) => __awaiter(void 0, void 0, void 0, function* () {
             try {
                 yield client.api.snsUnlikeMoment(momentId);
-                resolve("done");
+                resolve({ "msg": "done" });
             }
             catch (e) {
                 resolve(e);
@@ -613,7 +644,7 @@ const PadLocal = {
         return new Promise((resolve) => __awaiter(void 0, void 0, void 0, function* () {
             try {
                 yield client.api.snsRemoveMomentComment(momentId, commentId);
-                resolve("done");
+                resolve({ "msg": "done" });
             }
             catch (e) {
                 resolve(e);
@@ -624,7 +655,7 @@ const PadLocal = {
         return new Promise((resolve) => __awaiter(void 0, void 0, void 0, function* () {
             try {
                 yield client.api.snsMakeMomentPrivate(momentId);
-                resolve("done");
+                resolve({ "msg": "done" });
             }
             catch (e) {
                 resolve(e);
@@ -635,7 +666,7 @@ const PadLocal = {
         return new Promise((resolve) => __awaiter(void 0, void 0, void 0, function* () {
             try {
                 yield client.api.snsMakeMomentPublic(momentId);
-                resolve("done");
+                resolve({ "msg": "done" });
             }
             catch (e) {
                 resolve(e);

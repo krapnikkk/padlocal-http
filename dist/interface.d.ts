@@ -2,6 +2,11 @@ export interface IMessage {
     message: string;
     id: string;
 }
+export interface IMessageRevokeInfo {
+    clientMsgId: string;
+    newClientMsgId: string;
+    createTime: number;
+}
 export interface PadLocalClientConfig {
     serverHost: string;
     serverPort: string;

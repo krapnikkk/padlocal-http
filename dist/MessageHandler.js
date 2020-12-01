@@ -1,11 +1,18 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-const utils_1 = require("./utils");
+const axios_1 = __importDefault(require("axios"));
 const MessageHandler = {
     postUrl: "",
     post: (message) => {
         if (MessageHandler.postUrl) {
-            utils_1.post(MessageHandler.postUrl, message);
+            axios_1.default.post(MessageHandler.postUrl, message)
+                .then(() => {
+            }).catch((e) => {
+                console.log(e.message);
+            });
         }
     }
 };
