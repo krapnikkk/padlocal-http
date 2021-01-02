@@ -11,10 +11,11 @@ import MessageHandler from "./MessageHandler";
 let client: PadLocalClient;
 const PadLocal = {
     isLogin: false,
-    install: (config: PadLocalClientConfig) => {
+    install: async (config: PadLocalClientConfig) => {
         try {
-            let { serverHost, serverPort, token, serverCAFilePath } = config;
-            client = new PadLocalClient(`${serverHost}:${serverPort}`, token, serverCAFilePath);
+            let { token } = config;
+            // client = new PadLocalClient(`${serverHost}:${serverPort}`, token, serverCAFilePath);
+            client = await PadLocalClient.create(token);
         } catch (e) {
             console.warn(e);
         }
@@ -43,7 +44,7 @@ const PadLocal = {
                 onLoginSuccess(contact: Contact) {
                     client.on("message", (messageList: Message[]) => {
                         for (const message of messageList) {
-                            // console.log("on message: ", JSON.stringify(message.toObject()));
+                            console.log("on message: ", JSON.stringify(message.toObject()));
                             MessageHandler.post(message.toObject())
                         }
                     });
@@ -157,7 +158,7 @@ const PadLocal = {
         return new Promise(async (resolve) => {
             try {
                 const { title, desc, url, thumburl } = info;
-                const msgId = await client.api.sendAppMessageLink(
+                const msgId = await client.api.sendMessageLink(
                     genIdempotentId(),
                     id,
                     new pb.AppMessageLink()
@@ -180,7 +181,7 @@ const PadLocal = {
             try {
                 const { title, desc, url, mpThumbFilePath, mpappusername, mpappname, mpappid, appiconurl } = info;
                 const thumbImageData: Buffer = fs.readFileSync(mpThumbFilePath);
-                const msgId = await client.api.sendAppMessageMiniProgram(
+                const msgId = await client.api.sendMessageMiniProgram(
                     genIdempotentId(),
                     id,
                     new pb.AppMessageMiniProgram()

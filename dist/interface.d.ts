@@ -8,8 +8,8 @@ export interface IMessageRevokeInfo {
     createTime: number;
 }
 export interface PadLocalClientConfig {
-    serverHost: string;
-    serverPort: string;
+    serverHost?: string;
+    serverPort?: string;
     token: string;
     serverCAFilePath?: string;
     skipPrintVersion?: boolean;

@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.login = exports.install = void 0;
+exports.logout = exports.install = void 0;
 const express_1 = __importDefault(require("express"));
 const interface_1 = require("./interface");
 const cors_1 = __importDefault(require("cors"));
@@ -28,7 +28,7 @@ app.use(cors_1.default({
     methods: ['GET', 'POST', 'OPTIONS']
 }));
 process.on('unhandledRejection', (error) => {
-    console.log('unhandledRejection', error.message);
+    console.log('unhandledRejection', error);
 });
 app.use(checkLoginMiddleware_1.default);
 app.use(errorMiddleware_1.default);
@@ -420,20 +420,23 @@ app.post("/api/sns_make_moment_public", (req, res) => __awaiter(void 0, void 0, 
         success: true
     });
 }));
-app.use((_req, _res, next) => {
+app.use((req, _res, next) => {
     const error = new HttpException_1.default(http_status_codes_1.StatusCodes.NOT_FOUND, "Router Not Found");
+    let originalUrl = req.originalUrl;
+    console.log(originalUrl);
     next(error);
 });
-exports.install = (robotConfig, serverConfig) => {
+exports.install = (robotConfig, serverConfig) => __awaiter(void 0, void 0, void 0, function* () {
     let { postUrl, port } = serverConfig;
-    PadLocal_1.default.install(robotConfig);
+    yield PadLocal_1.default.install(robotConfig);
     MessageHandler_1.default.postUrl = postUrl;
     app.listen(port, () => __awaiter(void 0, void 0, void 0, function* () {
         console.log('Padlocal-http listen on http://127.0.0.1:' + serverConfig.port);
         console.log(`Post url :${postUrl}`);
     }));
-};
-exports.login = () => {
     PadLocal_1.default.login();
+});
+exports.logout = () => {
+    PadLocal_1.default.logout();
 };
 //# sourceMappingURL=PadLocalHTTP.js.map

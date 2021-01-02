@@ -15,7 +15,7 @@ app.use(cors({
 }));
 
 process.on('unhandledRejection', (error:Error) => {
-    console.log('unhandledRejection', error.message);
+    console.log('unhandledRejection', error);
   });
 
 app.use(checkLoginMiddleware);
@@ -458,23 +458,30 @@ app.post("/api/sns_make_moment_public", async (req: Request, res: Response) => {
     });
 });
 
-app.use((_req: Request, _res: Response, next: NextFunction) => {
+app.use((req: Request, _res: Response, next: NextFunction) => {
     const error: HttpException = new HttpException(StatusCodes.NOT_FOUND, "Router Not Found");
+    let originalUrl = req.originalUrl;
+    console.log(originalUrl);
     next(error);
 });
 
-export const install = (robotConfig: PadLocalClientConfig, serverConfig: ServerConfig) => {
+export const install = async (robotConfig: PadLocalClientConfig, serverConfig: ServerConfig) => {
     let { postUrl, port } = serverConfig;
-    PadLocal.install(robotConfig);
+    await PadLocal.install(robotConfig);
     MessageHandler.postUrl = postUrl;
     app.listen(port, async () => {
         console.log('Padlocal-http listen on http://127.0.0.1:' + serverConfig.port);
         console.log(`Post url :${postUrl}`)
     });
+    PadLocal.login();
 }
 
-export const login = () => {
-    PadLocal.login();
+// export const login = async () => {
+//     await PadLocal.login();
+// }
+
+export const logout = () => {
+    PadLocal.logout();
 }
 
 

@@ -2,7 +2,7 @@ import * as pb from "padlocal-client-ts/dist/proto/padlocal_pb";
 import { IMessage, IMessageRevokeInfo, Media, miniProgramShareInfo, PadLocalClientConfig, ReplyComment, ShareInfo, SNSImageMoment, SNSMomentType, SNSMonentOption } from "./interface";
 declare const PadLocal: {
     isLogin: boolean;
-    install: (config: PadLocalClientConfig) => void;
+    install: (config: PadLocalClientConfig) => Promise<void>;
     login: () => Promise<Object>;
     logout: () => Promise<unknown>;
     sendMessage: (msg: IMessage, atUserList?: string[]) => Promise<Object>;

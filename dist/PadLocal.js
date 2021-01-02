@@ -43,15 +43,15 @@ const MessageHandler_1 = __importDefault(require("./MessageHandler"));
 let client;
 const PadLocal = {
     isLogin: false,
-    install: (config) => {
+    install: (config) => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            let { serverHost, serverPort, token, serverCAFilePath } = config;
-            client = new padlocal_client_ts_1.PadLocalClient(`${serverHost}:${serverPort}`, token, serverCAFilePath);
+            let { token } = config;
+            client = yield padlocal_client_ts_1.PadLocalClient.create(token);
         }
         catch (e) {
             console.warn(e);
         }
-    },
+    }),
     login: () => __awaiter(void 0, void 0, void 0, function* () {
         return new Promise((resolve, reject) => __awaiter(void 0, void 0, void 0, function* () {
             if (!client) {
@@ -76,6 +76,7 @@ const PadLocal = {
                 onLoginSuccess(contact) {
                     client.on("message", (messageList) => {
                         for (const message of messageList) {
+                            console.log("on message: ", JSON.stringify(message.toObject()));
                             MessageHandler_1.default.post(message.toObject());
                         }
                     });
@@ -165,7 +166,7 @@ const PadLocal = {
         return new Promise((resolve) => __awaiter(void 0, void 0, void 0, function* () {
             try {
                 const { title, desc, url, thumburl } = info;
-                const msgId = yield client.api.sendAppMessageLink(Utils_1.genIdempotentId(), id, new pb.AppMessageLink()
+                const msgId = yield client.api.sendMessageLink(Utils_1.genIdempotentId(), id, new pb.AppMessageLink()
                     .setTitle(title)
                     .setDescription(desc)
                     .setUrl(url)
@@ -182,7 +183,7 @@ const PadLocal = {
             try {
                 const { title, desc, url, mpThumbFilePath, mpappusername, mpappname, mpappid, appiconurl } = info;
                 const thumbImageData = fs_1.default.readFileSync(mpThumbFilePath);
-                const msgId = yield client.api.sendAppMessageMiniProgram(Utils_1.genIdempotentId(), id, new pb.AppMessageMiniProgram()
+                const msgId = yield client.api.sendMessageMiniProgram(Utils_1.genIdempotentId(), id, new pb.AppMessageMiniProgram()
                     .setTitle(title)
                     .setDescription(desc)
                     .setUrl(url)
