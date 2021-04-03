@@ -193,7 +193,7 @@ const PadLocal = {
                         .setMpappid(mpappid)
                         .setMpappiconurl(appiconurl)
                         .setMpapppath("pages/home/index.html?utm_medium=userid_123456")
-                        .setThumbimage(thumbImageData)
+                        .setThumbimage(thumbImageData), thumbImageData
                 )
                 resolve({ msgId });
             } catch (e) {
@@ -265,10 +265,10 @@ const PadLocal = {
             }
         })
     },
-    acceptUser: async (stranger: string, ticket: string): Promise<Object> => {
+    acceptUser: async (userName: string, stranger: string, ticket: string, scene: number): Promise<Object> => {
         return new Promise(async (resolve) => {
             try {
-                await client.api.acceptUser(stranger, ticket);
+                await client.api.acceptUser(userName, stranger, ticket, scene);
                 resolve({ "msg": "done" });
             } catch (e) {
                 resolve(e);
@@ -343,7 +343,7 @@ const PadLocal = {
             try {
                 const memberList = await client.api.getChatRoomMembers(roomId);
                 let response = memberList.map((menber) => {
-                        return menber.toObject();
+                    return menber.toObject();
                 })
                 resolve({ response });
             } catch (e) {
@@ -416,7 +416,7 @@ const PadLocal = {
     inviteChatRoomMember: async (roomId: string, userName: string): Promise<Object> => {
         return new Promise(async (resolve) => {
             try {
-                await client.api.inviteChatRoomMember(roomId, userName);
+                await client.api.addChatRoomMember(roomId, userName);
                 resolve({ "msg": "done" });
             } catch (e) {
                 resolve(e);
