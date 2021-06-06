@@ -192,7 +192,7 @@ const PadLocal = {
                     .setMpappid(mpappid)
                     .setMpappiconurl(appiconurl)
                     .setMpapppath("pages/home/index.html?utm_medium=userid_123456")
-                    .setThumbimage(thumbImageData));
+                    .setThumbimage(thumbImageData), thumbImageData);
                 resolve({ msgId });
             }
             catch (e) {
@@ -262,10 +262,10 @@ const PadLocal = {
             }
         }));
     }),
-    acceptUser: (stranger, ticket) => __awaiter(void 0, void 0, void 0, function* () {
+    acceptUser: (userName, stranger, ticket, scene) => __awaiter(void 0, void 0, void 0, function* () {
         return new Promise((resolve) => __awaiter(void 0, void 0, void 0, function* () {
             try {
-                yield client.api.acceptUser(stranger, ticket);
+                yield client.api.acceptUser(userName, stranger, ticket, scene);
                 resolve({ "msg": "done" });
             }
             catch (e) {
@@ -405,8 +405,8 @@ const PadLocal = {
     addChatRoomMember: (roomId, userName) => __awaiter(void 0, void 0, void 0, function* () {
         return new Promise((resolve) => __awaiter(void 0, void 0, void 0, function* () {
             try {
-                yield client.api.addChatRoomMember(roomId, userName);
-                resolve({ "msg": "done" });
+                let status = yield client.api.addChatRoomMember(roomId, userName);
+                resolve({ status, "msg": "done" });
             }
             catch (e) {
                 resolve(e);
@@ -427,8 +427,8 @@ const PadLocal = {
     inviteChatRoomMember: (roomId, userName) => __awaiter(void 0, void 0, void 0, function* () {
         return new Promise((resolve) => __awaiter(void 0, void 0, void 0, function* () {
             try {
-                yield client.api.inviteChatRoomMember(roomId, userName);
-                resolve({ "msg": "done" });
+                let status = yield client.api.addChatRoomMember(roomId, userName);
+                resolve({ status, "msg": "done" });
             }
             catch (e) {
                 resolve(e);

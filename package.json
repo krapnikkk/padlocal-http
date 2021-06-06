@@ -1,6 +1,6 @@
 {
   "name": "padlocal-http",
-  "version": "0.1.17",
+  "version": "0.1.22",
   "description": "make http api for Padlocal ts client",
   "keywords": [
     "padlocal",
@@ -37,7 +37,7 @@
     "express": "^4.17.1",
     "http-status-codes": "^2.1.4",
     "music-metadata": "^7.5.0",
-    "padlocal-client-ts": "^0.2.27"
+    "padlocal-client-ts": "^0.3.0"
   },
   "devDependencies": {
     "@types/cors": "^2.8.8",

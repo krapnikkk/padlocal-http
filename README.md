@@ -20,10 +20,7 @@ npm install padlocl-http
 import PadLocalHTTP from "padlocal-http"
 
 const padLocalOptions = {
-    "serverHost": "serverHost", // padlocal服务器地址
-    "serverPort": "serverPort", // padlocal服务器端口
     "token": "你的token",//token需要申请
-    "serverCAFilePath": "./config/ca.pem" // padlocal服务器证书文件
 };
 
 const serverOptions = {

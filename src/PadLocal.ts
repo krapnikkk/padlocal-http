@@ -396,8 +396,8 @@ const PadLocal = {
     addChatRoomMember: async (roomId: string, userName: string): Promise<Object> => {
         return new Promise(async (resolve) => {
             try {
-                await client.api.addChatRoomMember(roomId, userName);
-                resolve({ "msg": "done" });
+                let status = await client.api.addChatRoomMember(roomId, userName);
+                resolve({ status, "msg": "done" });
             } catch (e) {
                 resolve(e);
             }
@@ -416,8 +416,8 @@ const PadLocal = {
     inviteChatRoomMember: async (roomId: string, userName: string): Promise<Object> => {
         return new Promise(async (resolve) => {
             try {
-                await client.api.addChatRoomMember(roomId, userName);
-                resolve({ "msg": "done" });
+                let status = await client.api.addChatRoomMember(roomId, userName);
+                resolve({ status, "msg": "done" });
             } catch (e) {
                 resolve(e);
             }

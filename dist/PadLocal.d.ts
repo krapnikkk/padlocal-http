@@ -15,7 +15,7 @@ declare const PadLocal: {
     deleteContact: (userName: string) => Promise<Object>;
     getContact: (userName: string) => Promise<unknown>;
     getContactQRCode: () => Promise<Object>;
-    acceptUser: (stranger: string, ticket: string) => Promise<Object>;
+    acceptUser: (userName: string, stranger: string, ticket: string, scene: number) => Promise<Object>;
     searchContact: (userName: string) => Promise<Object>;
     updateSelfNickName: (nickname: string) => Promise<Object>;
     updateSelfSignature: (signature: string) => Promise<Object>;

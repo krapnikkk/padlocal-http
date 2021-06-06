@@ -167,7 +167,7 @@ app.post("/api/get_contact_qrcode", (_req, res) => __awaiter(void 0, void 0, voi
 }));
 app.post("/api/accept_contact", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     let { stranger, ticket } = req.body;
-    let result = yield PadLocal_1.default.acceptUser(stranger, ticket);
+    let result = yield PadLocal_1.default.acceptUser("", stranger, ticket, 0);
     res.json({
         result: result,
         success: true
@@ -279,7 +279,7 @@ app.post("/api/delete_chatroom_member", (req, res) => __awaiter(void 0, void 0, 
 }));
 app.post("/api/invite_chatroom_member", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     let { roomId, userName } = req.body;
-    let result = yield PadLocal_1.default.inviteChatRoomMember(roomId, userName);
+    let result = yield PadLocal_1.default.addChatRoomMember(roomId, userName);
     res.json({
         result: result,
         success: true

@@ -173,7 +173,7 @@ app.post("/api/get_contact_qrcode", async (_req: Request, res: Response) => {
 
 app.post("/api/accept_contact", async (req: Request, res: Response) => {
     let { stranger, ticket } = req.body;
-    let result = await PadLocal.acceptUser(stranger, ticket);
+    let result = await PadLocal.acceptUser("",stranger, ticket,0);
     res.json({
         result: result,
         success: true
@@ -299,7 +299,7 @@ app.post("/api/delete_chatroom_member", async (req: Request, res: Response) => {
 
 app.post("/api/invite_chatroom_member", async (req: Request, res: Response) => {
     let { roomId, userName } = req.body;
-    let result = await PadLocal.inviteChatRoomMember(roomId, userName);
+    let result = await PadLocal.addChatRoomMember(roomId, userName);
     res.json({
         result: result,
         success: true
