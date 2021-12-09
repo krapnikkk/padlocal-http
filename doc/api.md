@@ -392,11 +392,25 @@
 | `userName` | string | - | 微信 ID |
 | `greeting` | string | - | 验证请求 |
 
+
 ### 响应数据
 
 | 字段名 | 数据类型 | 说明 |
 | ----- | ------- | --- |
 | `qrcode` | string  | 二维码图片base64 |
+
+
+## `get_contact_list` 获取我的通讯录
+
+### 参数
+无
+
+### 响应数据
+
+| 字段名 | 数据类型 | 说明 |
+| ----- | ------- | --- |
+| `response` | Contact[]  | 通讯录 |
+
 
 ## `search_contact` 获取微信用户信息
 

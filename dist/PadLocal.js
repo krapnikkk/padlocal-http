@@ -43,6 +43,7 @@ const MessageHandler_1 = __importDefault(require("./MessageHandler"));
 let client;
 const PadLocal = {
     isLogin: false,
+    contactList: [],
     install: (config) => __awaiter(void 0, void 0, void 0, function* () {
         try {
             let { token } = config;
@@ -85,6 +86,7 @@ const PadLocal = {
                     resolve({ response });
                 },
                 onSync: (_syncEvent) => {
+                    PadLocal.contactList = _syncEvent.getContactList();
                 }
             }).catch(e => {
                 reject(e);

@@ -21,6 +21,14 @@ process.on('unhandledRejection', (error:Error) => {
 app.use(checkLoginMiddleware);
 app.use(errorMiddleware);
 
+app.get("/api/get_contact_list", async (_req: Request, res: Response) => {
+    let response = PadLocal.contactList;
+    res.json({
+        result: {response},
+        success: true
+    });
+});
+
 app.post("/api/login", async (_req: Request, res: Response) => {
     let result = await PadLocal.login();
     res.json({

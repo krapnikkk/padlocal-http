@@ -11,6 +11,7 @@ import MessageHandler from "./MessageHandler";
 let client: PadLocalClient;
 const PadLocal = {
     isLogin: false,
+    contactList:[] as Contact[],
     install: async (config: PadLocalClientConfig) => {
         try {
             let { token } = config;
@@ -53,6 +54,7 @@ const PadLocal = {
                     resolve({ response });
                 },
                 onSync: (_syncEvent: SyncEvent) => {
+                    PadLocal.contactList = _syncEvent.getContactList();
                     // for (const contact of _syncEvent.getContactList()) {
                     //     console.log("login on sync contact: ", JSON.stringify(contact.toObject()));
                     // }
