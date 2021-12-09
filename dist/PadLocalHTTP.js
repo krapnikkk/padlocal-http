@@ -32,10 +32,10 @@ process.on('unhandledRejection', (error) => {
 });
 app.use(checkLoginMiddleware_1.default);
 app.use(errorMiddleware_1.default);
-app.get("/api/getContactList", (_req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    let result = PadLocal_1.default.contactList;
+app.get("/api/get_contact_list", (_req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    let response = PadLocal_1.default.contactList;
     res.json({
-        result: result,
+        result: { response },
         success: true
     });
 }));
