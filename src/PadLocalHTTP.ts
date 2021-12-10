@@ -21,8 +21,8 @@ process.on('unhandledRejection', (error:Error) => {
 app.use(checkLoginMiddleware);
 app.use(errorMiddleware);
 
-app.get("/api/get_contact_list", async (_req: Request, res: Response) => {
-    let response = PadLocal.contactList;
+app.post("/api/get_contact_list", async (_req: Request, res: Response) => {
+    let response = await PadLocal.syncContact();
     res.json({
         result: {response},
         success: true

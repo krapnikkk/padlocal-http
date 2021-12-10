@@ -54,7 +54,8 @@ const PadLocal = {
                     resolve({ response });
                 },
                 onSync: (_syncEvent: SyncEvent) => {
-                    PadLocal.contactList = _syncEvent.getContactList();
+                    // console.log("onSync:",_syncEvent)
+                    // PadLocal.contactList = _syncEvent.getContactList();
                     // for (const contact of _syncEvent.getContactList()) {
                     //     console.log("login on sync contact: ", JSON.stringify(contact.toObject()));
                     // }
@@ -217,6 +218,19 @@ const PadLocal = {
             }
 
         })
+    },
+    syncContact:async():Promise<any>=>{
+        return new Promise(async (resolve) => {
+            try {
+                await client.api.syncContact(PadLocal);
+                resolve(PadLocal.contactList);
+            } catch (e) {
+                resolve(e);
+            }
+        })
+    },
+    onSync:(contactList: pb.Contact[])=>{
+        PadLocal.contactList = contactList;
     },
     addContact: async (userName: string, greeting: string): Promise<Object> => {
         return new Promise(async (resolve) => {

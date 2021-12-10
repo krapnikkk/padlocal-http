@@ -13,6 +13,8 @@ declare const PadLocal: {
     sendAppMessageLink: (id: string, info: ShareInfo) => Promise<Object>;
     sendAppMessageMiniProgram: (id: string, info: miniProgramShareInfo) => Promise<Object>;
     sendContactCardMessage: (id: string, userName: string) => Promise<Object>;
+    syncContact: () => Promise<any>;
+    onSync: (contactList: pb.Contact[]) => void;
     addContact: (userName: string, greeting: string) => Promise<Object>;
     deleteContact: (userName: string) => Promise<Object>;
     getContact: (userName: string) => Promise<unknown>;

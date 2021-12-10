@@ -86,7 +86,6 @@ const PadLocal = {
                     resolve({ response });
                 },
                 onSync: (_syncEvent) => {
-                    PadLocal.contactList = _syncEvent.getContactList();
                 }
             }).catch(e => {
                 reject(e);
@@ -216,6 +215,20 @@ const PadLocal = {
             }
         }));
     }),
+    syncContact: () => __awaiter(void 0, void 0, void 0, function* () {
+        return new Promise((resolve) => __awaiter(void 0, void 0, void 0, function* () {
+            try {
+                yield client.api.syncContact(PadLocal);
+                resolve(PadLocal.contactList);
+            }
+            catch (e) {
+                resolve(e);
+            }
+        }));
+    }),
+    onSync: (contactList) => {
+        PadLocal.contactList = contactList;
+    },
     addContact: (userName, greeting) => __awaiter(void 0, void 0, void 0, function* () {
         return new Promise((resolve) => __awaiter(void 0, void 0, void 0, function* () {
             try {

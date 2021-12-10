@@ -32,8 +32,8 @@ process.on('unhandledRejection', (error) => {
 });
 app.use(checkLoginMiddleware_1.default);
 app.use(errorMiddleware_1.default);
-app.get("/api/get_contact_list", (_req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    let response = PadLocal_1.default.contactList;
+app.post("/api/get_contact_list", (_req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    let response = yield PadLocal_1.default.syncContact();
     res.json({
         result: { response },
         success: true
