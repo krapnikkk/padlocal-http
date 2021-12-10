@@ -11,7 +11,7 @@ import MessageHandler from "./MessageHandler";
 let client: PadLocalClient;
 const PadLocal = {
     isLogin: false,
-    contactList:[] as Contact[],
+    contactList:[] as Contact.AsObject[],
     install: async (config: PadLocalClientConfig) => {
         try {
             let { token } = config;
@@ -230,7 +230,9 @@ const PadLocal = {
         })
     },
     onSync:(contactList: pb.Contact[])=>{
-        PadLocal.contactList = contactList;
+        PadLocal.contactList = contactList.map((contact)=>{
+            return contact.toObject();
+        });
     },
     addContact: async (userName: string, greeting: string): Promise<Object> => {
         return new Promise(async (resolve) => {

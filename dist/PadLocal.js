@@ -227,7 +227,9 @@ const PadLocal = {
         }));
     }),
     onSync: (contactList) => {
-        PadLocal.contactList = contactList;
+        PadLocal.contactList = contactList.map((contact) => {
+            return contact.toObject();
+        });
     },
     addContact: (userName, greeting) => __awaiter(void 0, void 0, void 0, function* () {
         return new Promise((resolve) => __awaiter(void 0, void 0, void 0, function* () {
